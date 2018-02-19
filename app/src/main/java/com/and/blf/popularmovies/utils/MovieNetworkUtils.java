@@ -13,8 +13,8 @@ import java.util.Scanner;
 
 public class MovieNetworkUtils {
     private final static String MOVIE_BASE_URL = "https://api.themoviedb.org/3";
-    final static String POPULAR_ENDPOINT = "/movie/popular";
-    final static String TOP_RATED_ENDPOINT = "/movie/top_rated";
+    public final static String POPULAR_ENDPOINT = "/movie/popular";
+    public final static String TOP_RATED_ENDPOINT = "/movie/top_rated";
     final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p";
 
     private final static String MALFORMED_URL_EXCEPTION_TAG = "MalformedURLException";
