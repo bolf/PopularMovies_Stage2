@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="sort_movies_by_rating">Sort movies by rating</string>
+    <string name="sort_movies_by_popularity">Sort movies by popularity</string>
+    <string name="sort_mode">sort_mode</string>
+    <string name="sharedPrefFileName">com.and.blf.popularmovies.PREFERENCE_FILE</string>
+    <string name="sortByPopularity">sortByPopularity</string>
+    <string name="sortByRating">sortByRating</string>
 </resources>
