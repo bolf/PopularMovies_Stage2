@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,11 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
         holder.movieTitle.setText(m_movieList.get(position).getTitle());
         //TODO: implement getting image from the movie API
         holder.moviePosterThumbnail.setImageResource(R.drawable.canada);
+        Picasso.with(holder.moviePosterThumbnail.getContext())
+                .load(MovieNetworkUtils.buildImageRequestUrl(m_movieList.get(position).getPosterPath()))
+                //.fit()
+                //.centerCrop()
+                .into(holder.moviePosterThumbnail);
     }
 
     @Override

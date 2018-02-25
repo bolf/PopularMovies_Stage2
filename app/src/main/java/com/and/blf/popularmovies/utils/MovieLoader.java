@@ -7,6 +7,9 @@ import android.text.TextUtils;
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
 
+import org.json.JSONException;
+
+import java.text.ParseException;
 import java.util.List;
 
 public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
@@ -17,21 +20,25 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
     @Override
     public List<Movie> loadInBackground() {
         String previousSortSetting = SharedPreferencesUtils.readFromSharedPreferences(getContext(),
-                                                getContext().getString(R.string.sharedPrefFileName),
-                                                getContext().getString(R.string.sort_mode));
+                getContext().getString(R.string.sharedPrefFileName),
+                getContext().getString(R.string.sort_mode));
         String requestEndPoint = null;
-        if(previousSortSetting.equals(getContext().getString(R.string.sortByPopularity))){
+        if (previousSortSetting.equals(getContext().getString(R.string.sortByPopularity))) {
             requestEndPoint = MovieNetworkUtils.POPULAR_ENDPOINT;
-        }else
-            if(previousSortSetting.equals(getContext().getString(R.string.sortByRating))){
-                requestEndPoint = MovieNetworkUtils.TOP_RATED_ENDPOINT;
+        } else if (previousSortSetting.equals(getContext().getString(R.string.sortByRating))) {
+            requestEndPoint = MovieNetworkUtils.TOP_RATED_ENDPOINT;
         }
-        if(requestEndPoint == null) return null;
+        if (requestEndPoint == null) return null;
         String movieServiceJsonResponse = MovieNetworkUtils.getMovies(requestEndPoint, getContext());
-        if(! TextUtils.isEmpty(movieServiceJsonResponse)){
-
+        if (!TextUtils.isEmpty(movieServiceJsonResponse)) {
+            try {
+                return JsonUtils.getMoviesFromJson(movieServiceJsonResponse, getContext());
+            } catch (ParseException pE) {
+                //TODO: workout the exception
+            } catch (JSONException ioE) {
+                //TODO: workout the exception
+            }
         }
-
-        return TmpUtils.getMovieList();
+        return null;
     }
 }

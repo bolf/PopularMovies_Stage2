@@ -20,7 +20,7 @@ public class MovieNetworkUtils {
     private final static String MOVIE_BASE_URL = "https://api.themoviedb.org/3";
     public final static String POPULAR_ENDPOINT = "movie/popular";
     public final static String TOP_RATED_ENDPOINT = "movie/top_rated";
-    final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p";
+    final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w200";
 
     private final static String MALFORMED_URL_EXCEPTION_TAG = "MalformedURLException";
     private final static String IO_EXCEPTION_TAG = "IOException";
@@ -29,7 +29,7 @@ public class MovieNetworkUtils {
         String moviesJson = null;
         URL requestUrl = null;
         try{
-            requestUrl = buildMovieRequestUrl(endPoint, context);
+            requestUrl = buildMovieRequestUrlWithAPIKey(endPoint, context);
         }catch (MalformedURLException e){
             Log.e(MALFORMED_URL_EXCEPTION_TAG,e.getMessage());
         }
@@ -70,12 +70,18 @@ public class MovieNetworkUtils {
         return "";
     }
 
-    private static URL buildMovieRequestUrl(String endpoint, Context context) throws MalformedURLException{
+    private static URL buildMovieRequestUrlWithAPIKey(String endpoint, Context context) throws MalformedURLException{
         Uri requestUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                 .appendEncodedPath(endpoint)
                 .appendQueryParameter("api_key", context.getString(R.string.api_key))
                 .build();
 
         return new URL(requestUri.toString());
+    }
+
+    public static String buildImageRequestUrl(String path){
+        Uri requestUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
+                .appendEncodedPath(path).build();
+        return requestUri.toString();
     }
 }

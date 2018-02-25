@@ -7,5 +7,13 @@
     <string name="sortByPopularity">sortByPopularity</string>
     <string name="sortByRating">sortByRating</string>
 
-    <string name="api_key">***</string>
+    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
+    <string name="jsonNames_results">results</string>
+    <string name="jsonNames_id">id</string>
+    <string name="jsonNames_title">title</string>
+    <string name="jsonNames_poster_path">poster_path</string>
+    <string name="jsonNames_backdrop_path">backdrop_path</string>
+    <string name="jsonNames_overview">overview</string>
+    <string name="jsonNames_vote_average">vote_average</string>
+    <string name="jsonNames_release_date">release_date</string>
 </resources>
