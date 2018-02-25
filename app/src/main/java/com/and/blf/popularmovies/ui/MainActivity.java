@@ -100,11 +100,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Toast.makeText(this,getString(R.string.sortByPopularity),Toast.LENGTH_SHORT).show();
         menuItem.setChecked(true);
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByPopularity));
+        getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
     }
 
     public void onSortByRatingMenuItemClick(MenuItem menuItem){
         Toast.makeText(this,getString(R.string.sortByRating),Toast.LENGTH_SHORT).show();
         menuItem.setChecked(true);
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByRating));
+        getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
     }
 }

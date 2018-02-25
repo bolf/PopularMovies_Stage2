@@ -6,4 +6,6 @@
     <string name="sharedPrefFileName">com.and.blf.popularmovies.PREFERENCE_FILE</string>
     <string name="sortByPopularity">sortByPopularity</string>
     <string name="sortByRating">sortByRating</string>
+
+    <string name="api_key">***</string>
 </resources>
