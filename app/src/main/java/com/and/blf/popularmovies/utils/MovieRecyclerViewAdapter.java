@@ -28,12 +28,8 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         holder.movieTitle.setText(m_movieList.get(position).getTitle());
-        //TODO: implement getting image from the movie API
-        holder.moviePosterThumbnail.setImageResource(R.drawable.canada);
         Picasso.with(holder.moviePosterThumbnail.getContext())
                 .load(MovieNetworkUtils.buildImageRequestUrl(m_movieList.get(position).getPosterPath()))
-                //.fit()
-                //.centerCrop()
                 .into(holder.moviePosterThumbnail);
     }
 
@@ -48,17 +44,3 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
         notifyDataSetChanged();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

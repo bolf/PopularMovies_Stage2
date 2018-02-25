@@ -27,10 +27,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final int MOVIE_LOADER_ID = 45;
 
-    private List<Movie> m_movieList;
-    private RecyclerView mRecyclerView;
     private MovieRecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +42,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (movieLoader == null){
             loaderManager.initLoader(MOVIE_LOADER_ID,new Bundle(),this).forceLoad();
         }else{
-            loaderManager.restartLoader(MOVIE_LOADER_ID,new Bundle(),this);
+            loaderManager.restartLoader(MOVIE_LOADER_ID,new Bundle(),this).forceLoad();
         }
 
         //RV
-        m_movieList = new ArrayList<>();
-        mLayoutManager = new GridLayoutManager(MainActivity.this,2);
-        mRecyclerView = findViewById(R.id.rvMovies);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MovieRecyclerViewAdapter(m_movieList);
-        mRecyclerView.setAdapter(mAdapter);
+        List<Movie> movieList = new ArrayList<>();
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
+        movieRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new MovieRecyclerViewAdapter(movieList);
+        movieRecyclerView.setAdapter(mAdapter);
     }
 
     //Loaders
@@ -68,17 +65,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader loader, Object data) {
         if(data !=  null && data instanceof ArrayList) {
             mAdapter.setMovieList((ArrayList<Movie>) data);
-            Toast.makeText(this, "Loader'd finished it's work", Toast.LENGTH_SHORT).show();
         }else {
-            Toast.makeText(this, "Loader couldn't fetch the data from MovieService", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Couldn't fetch the data from the MovieService", Toast.LENGTH_LONG).show();
         }
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.GONE);
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
-
-    }
+    public void onLoaderReset(Loader loader) {}
 
     //Sorting menu handling
     @Override
@@ -87,26 +81,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         inflater.inflate(R.menu.movie_sort_menu, menu);
         String previousSortSetting = SharedPreferencesUtils.readFromSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode));
         switch (previousSortSetting){
-            case "sortByPopularity": menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
+            case "sortByPopularity":
+                menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
+                setAppTitle("popular");
                 break;
-            case "sortByRating": menu.findItem(R.id.sortByRatingMenuItem).setChecked(true);
+            case "sortByRating":
+                menu.findItem(R.id.sortByRatingMenuItem).setChecked(true);
+                setAppTitle("rated");
                 break;
-            default: menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
+            default:
+                menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
+                setAppTitle("popular");
         }
         return true;
     }
 
     public void onSortByPopularityMenuItemClick(MenuItem menuItem){
-        Toast.makeText(this,getString(R.string.sortByPopularity),Toast.LENGTH_SHORT).show();
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
+        setAppTitle("popular");
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByPopularity));
         getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
     }
 
     public void onSortByRatingMenuItemClick(MenuItem menuItem){
-        Toast.makeText(this,getString(R.string.sortByRating),Toast.LENGTH_SHORT).show();
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
+        setAppTitle("rated");
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByRating));
         getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
     }
+
+    private void setAppTitle(String adding){
+        setTitle(getString(R.string.app_name) + " (" + adding + ")");
+    }
+
 }

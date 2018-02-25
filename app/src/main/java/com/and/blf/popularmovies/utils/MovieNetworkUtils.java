@@ -1,11 +1,8 @@
 package com.and.blf.popularmovies.utils;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.and.blf.popularmovies.R;
 
@@ -18,37 +15,19 @@ import java.util.Scanner;
 
 public class MovieNetworkUtils {
     private final static String MOVIE_BASE_URL = "https://api.themoviedb.org/3";
-    public final static String POPULAR_ENDPOINT = "movie/popular";
-    public final static String TOP_RATED_ENDPOINT = "movie/top_rated";
-    final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w200";
+    final static String POPULAR_ENDPOINT = "movie/popular";
+    final static String TOP_RATED_ENDPOINT = "movie/top_rated";
+    private final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w200";
 
-    private final static String MALFORMED_URL_EXCEPTION_TAG = "MalformedURLException";
-    private final static String IO_EXCEPTION_TAG = "IOException";
 
-    public static String getMovies(@NonNull String endPoint, Context context){
-        String moviesJson = null;
-        URL requestUrl = null;
-        try{
-            requestUrl = buildMovieRequestUrlWithAPIKey(endPoint, context);
-        }catch (MalformedURLException e){
-            Log.e(MALFORMED_URL_EXCEPTION_TAG,e.getMessage());
-        }
-
-        if(requestUrl != null){
-            try{
-                moviesJson = getResponseFromHttpUrl(requestUrl);
-            }catch (IOException e){
-                Log.e(IO_EXCEPTION_TAG,e.getMessage());
-            }
-
-        }
-        return  moviesJson;
+    static String getMovies(@NonNull String endPoint, Context context) throws IOException {
+        URL requestUrl = buildMovieRequestUrlWithAPIKey(endPoint, context);
+        return getResponseFromHttpUrl(requestUrl);
     }
 
     private static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
-
             InputStream in = urlConnection.getInputStream();
 
             Scanner scanner = new Scanner(in);
@@ -61,13 +40,12 @@ public class MovieNetworkUtils {
                 return null;
             }
         }catch (IOException e){
-            Log.d("getInputStream","MSG:"+e.getMessage() + "\nSTACK");
             e.printStackTrace();
+            throw e;
         }
         finally {
             urlConnection.disconnect();
         }
-        return "";
     }
 
     private static URL buildMovieRequestUrlWithAPIKey(String endpoint, Context context) throws MalformedURLException{
@@ -79,7 +57,7 @@ public class MovieNetworkUtils {
         return new URL(requestUri.toString());
     }
 
-    public static String buildImageRequestUrl(String path){
+    static String buildImageRequestUrl(String path){
         Uri requestUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
                 .appendEncodedPath(path).build();
         return requestUri.toString();
