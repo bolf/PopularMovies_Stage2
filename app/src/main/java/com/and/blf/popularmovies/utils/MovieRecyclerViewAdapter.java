@@ -22,6 +22,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, null);
+        layoutView.setTag(m_movieList);
         return new MovieViewHolder(layoutView);
     }
 
@@ -43,4 +44,6 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
         m_movieList.addAll(lst);
         notifyDataSetChanged();
     }
+
+
 }
