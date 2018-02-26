@@ -27,7 +27,7 @@ public class JsonUtils {
                     jsonMovie.getString(context.getString(R.string.jsonNames_backdrop_path)),
                     jsonMovie.getString(context.getString(R.string.jsonNames_overview)),
                     (float) jsonMovie.getDouble(context.getString(R.string.jsonNames_vote_average)),
-                    CommonUtils.getDateFromString(jsonMovie.getString(context.getString(R.string.jsonNames_release_date)))));
+                    jsonMovie.getString(context.getString(R.string.jsonNames_release_date))));
         }
         return movieList;
     }

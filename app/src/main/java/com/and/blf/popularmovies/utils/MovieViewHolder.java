@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
@@ -30,6 +29,5 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
         Intent intent = new Intent(v.getContext(), MovieDetailsActivity.class);
         intent.putExtra(MovieDetailsActivity.MOVIE_PARCEL,((ArrayList<Movie>) itemView.getTag()).get(getAdapterPosition()));
         v.getContext().startActivity(intent);
-        Toast.makeText(v.getContext(), "Clicked Country Position = " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
     }
 }

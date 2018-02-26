@@ -30,7 +30,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         holder.movieTitle.setText(m_movieList.get(position).getTitle());
         Picasso.with(holder.moviePosterThumbnail.getContext())
-                .load(MovieNetworkUtils.buildImageRequestUrl(m_movieList.get(position).getPosterPath()))
+                .load(MovieNetworkUtils.buildImageRequestUrl("w200",m_movieList.get(position).getPosterPath()))
                 .into(holder.moviePosterThumbnail);
     }
 

@@ -7,7 +7,7 @@
     <string name="sortByPopularity">sortByPopularity</string>
     <string name="sortByRating">sortByRating</string>
 
-    <string name="api_key">***</string>
+    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
     <string name="jsonNames_results">results</string>
     <string name="jsonNames_id">id</string>
     <string name="jsonNames_title">title</string>

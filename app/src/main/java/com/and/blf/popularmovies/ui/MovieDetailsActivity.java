@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.utils.MovieNetworkUtils;
+import com.squareup.picasso.Picasso;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
@@ -40,11 +43,30 @@ public class MovieDetailsActivity extends AppCompatActivity {
         overviewTv.setText(movie.getOverview());
 
         TextView releaseDateTv = findViewById(R.id.release_date);
-        releaseDateTv.setText("2010-05-05");
-        //releaseDateTv.setText(movie.getReleaseDate().toString());
+        releaseDateTv.setText("Release date " + movie.getReleaseDate());
 
         TextView voteAverageTv = findViewById(R.id.vote_average);
-        voteAverageTv.setText(Float.valueOf(movie.getVoteAverage()).toString());
+        voteAverageTv.setText("Raiting " + Float.valueOf(movie.getVoteAverage()).toString());
+
+        ImageView backdropIv = findViewById(R.id.backdrop);
+        try{
+            Picasso.with(this)
+                    .load(MovieNetworkUtils.buildImageRequestUrl("w300",movie.getBackdropPath()))
+                    .into(backdropIv);
+        } catch (NullPointerException e) {
+            closeOnError();
+        }
+
+        ImageView posterIv = findViewById(R.id.poster);
+        try{
+            Picasso.with(this)
+                    .load(MovieNetworkUtils.buildImageRequestUrl("w200",movie.getPosterPath()))
+                    .into(posterIv);
+        } catch (NullPointerException e) {
+            closeOnError();
+        }
+
+
     }
 
     private void closeOnError() {

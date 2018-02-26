@@ -3,8 +3,6 @@ package com.and.blf.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 public class Movie implements Parcelable {
     private int id;
     private String title;
@@ -12,11 +10,11 @@ public class Movie implements Parcelable {
     private String backdropPath;
     private String overview;
     private float voteAverage;
-    private Date releaseDate;
+    private String releaseDate;
 
     public Movie(){}
 
-    public Movie(int id, String title, String posterPath, String backdropPath, String overview, float voteAverage, Date releaseDate) {
+    public Movie(int id, String title, String posterPath, String backdropPath, String overview, float voteAverage, String releaseDate) {
         this.id = id;
         this.title = title;
         this.posterPath = posterPath;
@@ -33,6 +31,7 @@ public class Movie implements Parcelable {
         backdropPath = in.readString();
         overview = in.readString();
         voteAverage = in.readFloat();
+        releaseDate = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -60,6 +59,7 @@ public class Movie implements Parcelable {
         dest.writeString(backdropPath);
         dest.writeString(overview);
         dest.writeFloat(voteAverage);
+        dest.writeString(releaseDate);
     }
 
     public int getId() {
@@ -110,11 +110,11 @@ public class Movie implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
-    public Date getReleaseDate() {
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
 }

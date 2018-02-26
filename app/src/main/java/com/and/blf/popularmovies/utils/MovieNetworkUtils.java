@@ -17,7 +17,7 @@ public class MovieNetworkUtils {
     private final static String MOVIE_BASE_URL = "https://api.themoviedb.org/3";
     final static String POPULAR_ENDPOINT = "movie/popular";
     final static String TOP_RATED_ENDPOINT = "movie/top_rated";
-    private final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w200";
+    private final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
 
     static String getMovies(@NonNull String endPoint, Context context) throws IOException {
@@ -57,9 +57,11 @@ public class MovieNetworkUtils {
         return new URL(requestUri.toString());
     }
 
-    static String buildImageRequestUrl(String path){
+    public static String buildImageRequestUrl(String sizePart, String picPath){
         Uri requestUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
-                .appendEncodedPath(path).build();
+                .appendPath(sizePart)
+                .appendEncodedPath(picPath)
+                .build();
         return requestUri.toString();
     }
 }
