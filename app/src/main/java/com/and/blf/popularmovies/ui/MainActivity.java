@@ -25,7 +25,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
     private ProgressBar mLoadingIndicator;
 
-    private static final int MOVIE_LOADER_ID = 45;
+    public static final int MOVIE_LOADER_ID = 45;
 
     private MovieRecyclerViewAdapter mAdapter;
 
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(MainActivity.this, 2);
         RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
         movieRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MovieRecyclerViewAdapter(movieList);
+        mAdapter = new MovieRecyclerViewAdapter(movieList,loaderManager);
         movieRecyclerView.setAdapter(mAdapter);
     }
 
@@ -97,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onSortByPopularityMenuItemClick(MenuItem menuItem){
+        MovieRecyclerViewAdapter.loadedPageCount = 1;
+        mAdapter.setShouldClearList(true);
         mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
         setAppTitle("popular");
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onSortByRatingMenuItemClick(MenuItem menuItem){
+        MovieRecyclerViewAdapter.loadedPageCount = 1;
+        mAdapter.setShouldClearList(true);
         mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
         setAppTitle("rated");

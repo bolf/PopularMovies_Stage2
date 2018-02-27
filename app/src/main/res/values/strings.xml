@@ -16,4 +16,9 @@
     <string name="jsonNames_overview">overview</string>
     <string name="jsonNames_vote_average">vote_average</string>
     <string name="jsonNames_release_date">release_date</string>
+    <string name="description_background_picture">background picture</string>
+    <string name="description_foreground_picture">foreground picture</string>
+    <string name="PARCELABLE_EXCEPTION">PARCELABLE_EXCEPTION</string>
+    <string name="PICASSO_EXCEPTION">PICASSO_EXCEPTION</string>
+    <string name="Raiting_tv">Raiting</string>
 </resources>

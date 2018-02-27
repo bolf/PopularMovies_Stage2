@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         try {
             movie = intent.getParcelableExtra(MOVIE_PARCEL);
         }catch (NullPointerException e){
+            Log.d(getString(R.string.PARCELABLE_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
         populateUI(movie);
@@ -46,7 +48,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         releaseDateTv.setText("Release date " + movie.getReleaseDate());
 
         TextView voteAverageTv = findViewById(R.id.vote_average);
-        voteAverageTv.setText("Raiting " + Float.valueOf(movie.getVoteAverage()).toString());
+        //TODO
+        voteAverageTv.setText(getString(R.string.Raiting_tv) + Float.valueOf(movie.getVoteAverage()).toString());
 
         ImageView backdropIv = findViewById(R.id.backdrop);
         try{
@@ -54,6 +57,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     .load(MovieNetworkUtils.buildImageRequestUrl("w300",movie.getBackdropPath()))
                     .into(backdropIv);
         } catch (NullPointerException e) {
+            Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
 
@@ -63,6 +67,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     .load(MovieNetworkUtils.buildImageRequestUrl("w200",movie.getPosterPath()))
                     .into(posterIv);
         } catch (NullPointerException e) {
+            Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
 
@@ -71,6 +76,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void closeOnError() {
         finish();
-        Toast.makeText(this, "couldn't get the detailed movie", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Couldn't get the detailed movie", Toast.LENGTH_SHORT).show();
     }
 }
