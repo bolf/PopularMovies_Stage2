@@ -52,6 +52,7 @@ public class MovieNetworkUtils {
         Uri requestUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                 .appendEncodedPath(endpoint)
                 .appendQueryParameter("api_key", context.getString(R.string.api_key))
+                .appendQueryParameter("page",new Integer(MovieRecyclerViewAdapter.loadedPageCount).toString())
                 .build();
 
         return new URL(requestUri.toString());
