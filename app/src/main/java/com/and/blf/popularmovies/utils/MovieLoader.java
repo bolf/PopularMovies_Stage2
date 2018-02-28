@@ -39,11 +39,11 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
                 return JsonUtils.getMoviesFromJson(movieServiceJsonResponse, getContext());
             }
         } catch (IOException e) {
-            Log.d("IOException", e.getMessage() + "\n" + Log.getStackTraceString(e));
+            Log.d(getContext().getString(R.string.IO_EXCEPTION), e.getMessage() + "\n" + Log.getStackTraceString(e));
         } catch (JSONException e){
-            Log.d("JSONException", e.getMessage() + "\n" + Log.getStackTraceString(e));
+            Log.d(getContext().getString(R.string.JSON_EXCEPTION), e.getMessage() + "\n" + Log.getStackTraceString(e));
         } catch (ParseException e){
-            Log.d("ParseException", e.getMessage() + "\n" + Log.getStackTraceString(e));
+            Log.d(getContext().getString(R.string.PARSE_EXCEPTION), e.getMessage() + "\n" + Log.getStackTraceString(e));
         }
         return null;
     }

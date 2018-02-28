@@ -16,9 +16,9 @@ import java.util.List;
 
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     private List<Movie> m_movieList;
-    boolean isLoadingNow;
+    private boolean mIsLoadingNow;
     public static int loadedPageCount = 1;
-    LoaderManager loaderManager;
+    private LoaderManager mLoaderManager;
     private boolean mShouldClearList;
 
     public void setShouldClearList(boolean mShouldClearList) {
@@ -27,7 +27,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
 
     public MovieRecyclerViewAdapter(List<Movie> movieList, LoaderManager loaderManager) {
         this.m_movieList = movieList;
-        this.loaderManager = loaderManager;
+        this.mLoaderManager = loaderManager;
     }
 
     @Override
@@ -39,10 +39,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.movieTitle.setText(m_movieList.get(position).getTitle());
-        Picasso.with(holder.moviePosterThumbnail.getContext())
+        holder.m_movieTitle.setText(m_movieList.get(position).getTitle());
+        Picasso.with(holder.m_moviePosterThumbnail.getContext())
                 .load(MovieNetworkUtils.buildImageRequestUrl("w200", m_movieList.get(position).getPosterPath()))
-                .into(holder.moviePosterThumbnail);
+                .into(holder.m_moviePosterThumbnail);
     }
 
     @Override
@@ -57,17 +57,17 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
         }
         m_movieList.addAll(lst);
         notifyDataSetChanged();
-        isLoadingNow = false;
+        mIsLoadingNow = false;
     }
 
     @Override
     public void onViewAttachedToWindow(MovieViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         int layoutPosition = holder.getLayoutPosition();
-        if (!isLoadingNow && layoutPosition > m_movieList.size() - 5) {
-            isLoadingNow = true;
+        if (!mIsLoadingNow && layoutPosition > m_movieList.size() - 5) {
+            mIsLoadingNow = true;
             loadedPageCount++;
-            loaderManager.getLoader(MainActivity.MOVIE_LOADER_ID).forceLoad();
+            mLoaderManager.getLoader(MainActivity.MOVIE_LOADER_ID).forceLoad();
         }
 
     }
