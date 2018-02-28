@@ -1,4 +1,6 @@
 <resources>
+    <string name="api_key">INSERT_HERE_YOUR_APIKEY_=)</string>
+
     <string name="app_name">Pop. Movies</string>
     <string name="sort_movies_by_rating">Sort movies by rating</string>
     <string name="sort_movies_by_popularity">Sort movies by popularity</string>
@@ -7,7 +9,6 @@
     <string name="sortByPopularity">sortByPopularity</string>
     <string name="sortByRating">sortByRating</string>
 
-    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
     <string name="jsonNames_results">results</string>
     <string name="jsonNames_id">id</string>
     <string name="jsonNames_title">title</string>
@@ -21,4 +22,7 @@
     <string name="PARCELABLE_EXCEPTION">PARCELABLE_EXCEPTION</string>
     <string name="PICASSO_EXCEPTION">PICASSO_EXCEPTION</string>
     <string name="Raiting_tv">Raiting</string>
+    <string name="IO_EXCEPTION">IOException</string>
+    <string name="JSON_EXCEPTION">JSONException</string>
+    <string name="PARSE_EXCEPTION">ParseException</string>
 </resources>
