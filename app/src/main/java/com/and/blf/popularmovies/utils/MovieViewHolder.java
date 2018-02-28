@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-     TextView movieTitle;
-     ImageView moviePosterThumbnail;
+     TextView m_movieTitle;
+     ImageView m_moviePosterThumbnail;
 
     MovieViewHolder(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
-        movieTitle = itemView.findViewById(R.id.movie_title);
-        moviePosterThumbnail = itemView.findViewById(R.id.movie_poster_thumbnail);
+        m_movieTitle = itemView.findViewById(R.id.movie_title);
+        m_moviePosterThumbnail = itemView.findViewById(R.id.movie_poster_thumbnail);
     }
 
     @Override
