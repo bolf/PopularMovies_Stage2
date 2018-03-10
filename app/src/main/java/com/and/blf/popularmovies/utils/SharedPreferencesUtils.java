@@ -13,6 +13,6 @@ public class SharedPreferencesUtils {
 
     public static String readFromSharedPreferences(Context context, String shPrefName, String prefName) {
         SharedPreferences sharedPref = context.getSharedPreferences(shPrefName,Context.MODE_PRIVATE);
-        return sharedPref.getString(prefName,"");
+        return sharedPref.getString(prefName, "popular");
     }
 }

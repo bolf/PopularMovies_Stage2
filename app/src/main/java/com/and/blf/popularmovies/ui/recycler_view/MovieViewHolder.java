@@ -1,4 +1,4 @@
-package com.and.blf.popularmovies.utils;
+package com.and.blf.popularmovies.ui.recycler_view;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -12,10 +12,10 @@ import com.and.blf.popularmovies.ui.MovieDetailsActivity;
 
 import java.util.ArrayList;
 
-public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-     TextView m_movieTitle;
-     ImageView m_moviePosterThumbnail;
+    TextView m_movieTitle;
+    ImageView m_moviePosterThumbnail;
 
     MovieViewHolder(View itemView) {
         super(itemView);
@@ -27,7 +27,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnC
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(v.getContext(), MovieDetailsActivity.class);
-        intent.putExtra(MovieDetailsActivity.MOVIE_PARCEL,((ArrayList<Movie>) itemView.getTag()).get(getAdapterPosition()));
+        intent.putExtra(MovieDetailsActivity.MOVIE_PARCEL, ((ArrayList<Movie>) itemView.getTag()).get(getAdapterPosition()));
         v.getContext().startActivity(intent);
     }
 }

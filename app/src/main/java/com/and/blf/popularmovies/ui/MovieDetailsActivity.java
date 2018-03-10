@@ -48,7 +48,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         releaseDateTv.setText("Release date " + movie.getReleaseDate());
 
         TextView voteAverageTv = findViewById(R.id.vote_average);
-        //TODO
+
         voteAverageTv.setText(getString(R.string.Raiting_tv) + Float.valueOf(movie.getVoteAverage()).toString());
 
         ImageView backdropIv = findViewById(R.id.backdrop);
@@ -70,8 +70,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
-
-
     }
 
     private void closeOnError() {

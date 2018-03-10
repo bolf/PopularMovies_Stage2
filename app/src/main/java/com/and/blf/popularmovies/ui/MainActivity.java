@@ -1,33 +1,43 @@
 package com.and.blf.popularmovies.ui;
 
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
-import com.and.blf.popularmovies.utils.MovieLoader;
-import com.and.blf.popularmovies.utils.MovieRecyclerViewAdapter;
+import com.and.blf.popularmovies.model.MovieWrapper;
+import com.and.blf.popularmovies.retrofit.MovieService;
+import com.and.blf.popularmovies.ui.recycler_view.MovieRecyclerViewAdapter;
+import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.and.blf.popularmovies.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
-    private ProgressBar mLoadingIndicator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
-    public static final int MOVIE_LOADER_ID = 45;
-
-    private MovieRecyclerViewAdapter mAdapter;
+public class MainActivity extends AppCompatActivity {
+    MovieRecyclerViewAdapter mAdapter;
+    MovieService movieService;
+    GridLayoutManager mLayoutManager;
+    int curPageNum = 1;
+    boolean isLoadingNow = false;
+    ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,43 +46,61 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
-        //Loader
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<List<Movie>> movieLoader = loaderManager.getLoader(MOVIE_LOADER_ID);
-        if (movieLoader == null){
-            loaderManager.initLoader(MOVIE_LOADER_ID,new Bundle(),this).forceLoad();
-        }else{
-            loaderManager.restartLoader(MOVIE_LOADER_ID,new Bundle(),this).forceLoad();
-        }
-
-        //RV
         List<Movie> movieList = new ArrayList<>();
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        mLayoutManager = new GridLayoutManager(MainActivity.this, 2);
         RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
+        movieRecyclerView.setHasFixedSize(true);
         movieRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MovieRecyclerViewAdapter(movieList,loaderManager);
+        mAdapter = new MovieRecyclerViewAdapter(movieList);
         movieRecyclerView.setAdapter(mAdapter);
+
+        movieService = new Retrofit.Builder()
+                .baseUrl("https://api.themoviedb.org/")
+                .addConverterFactory(MoshiConverterFactory.create())
+                .client(MovieNetworkUtils.getHttpClient())
+                .build()
+                .create(MovieService.class);
+
+        loadMovies(SharedPreferencesUtils.readFromSharedPreferences(this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
+
+        movieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastCompletelyVisibleItemPosition() && !isLoadingNow) {
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    if (networkIsAvailable()) {
+                        isLoadingNow = true;
+                        loadMovies(SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
+                    } else if (dy < 0) {
+                        mLoadingIndicator.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
     }
 
-    //Loaders
-    @Override
-    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-        return new MovieLoader(this);
-    }
+    private void loadMovies(String endPoint, final boolean reloadAdapterCollection) {
+        Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "1d0f6fe52ffd029bdfb40c1c3c780b73", curPageNum);
+        wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
-    @Override
-    public void onLoadFinished(Loader loader, Object data) {
-        if(data !=  null && data instanceof ArrayList) {
-            mAdapter.setMovieList((ArrayList<Movie>) data);
-        }else {
-            Toast.makeText(this, "Couldn't fetch the data from the MovieService", Toast.LENGTH_LONG).show();
-        }
-        mLoadingIndicator.setVisibility(View.GONE);
-    }
+            @Override
+            public void onResponse(Call<MovieWrapper> call, Response<MovieWrapper> response) {
+                List<Movie> lst = response.body().getResults();
+                mAdapter.setMovieList(lst, reloadAdapterCollection);
+                curPageNum++;
+                isLoadingNow = false;
+                mLoadingIndicator.setVisibility(View.GONE);
+            }
 
-    @Override
-    public void onLoaderReset(Loader loader) {}
+            @Override
+            public void onFailure(Call<MovieWrapper> call, Throwable t) {
+                Log.d("ON_FAILURE", t.getMessage());
+                isLoadingNow = false;
+                mLoadingIndicator.setVisibility(View.GONE);
+            }
+        });
+    }
 
     //Sorting menu handling
     @Override
@@ -81,13 +109,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         inflater.inflate(R.menu.movie_sort_menu, menu);
         String previousSortSetting = SharedPreferencesUtils.readFromSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode));
         switch (previousSortSetting){
-            case "sortByPopularity":
+            case "popular":
                 menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
                 setAppTitle("popular");
                 break;
-            case "sortByRating":
+            case "rated":
                 menu.findItem(R.id.sortByRatingMenuItem).setChecked(true);
-                setAppTitle("rated");
+                setAppTitle("top_rated");
                 break;
             default:
                 menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
@@ -97,27 +125,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onSortByPopularityMenuItemClick(MenuItem menuItem){
-        MovieRecyclerViewAdapter.loadedPageCount = 1;
-        mAdapter.setShouldClearList(true);
+        curPageNum = 1;
         mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
         setAppTitle("popular");
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByPopularity));
-        getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
+        loadMovies(getString(R.string.sortByPopularity), true);
     }
 
     public void onSortByRatingMenuItemClick(MenuItem menuItem){
-        MovieRecyclerViewAdapter.loadedPageCount = 1;
-        mAdapter.setShouldClearList(true);
+        curPageNum = 1;
         mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
         setAppTitle("rated");
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByRating));
-        getSupportLoaderManager().getLoader(MOVIE_LOADER_ID).forceLoad();
+        loadMovies(getString(R.string.sortByRating), true);
     }
 
     private void setAppTitle(String adding){
         setTitle(getString(R.string.app_name) + " (" + adding + ")");
+    }
+
+    private boolean networkIsAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 }

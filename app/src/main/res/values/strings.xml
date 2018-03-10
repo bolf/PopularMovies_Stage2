@@ -6,8 +6,8 @@
     <string name="sort_movies_by_popularity">Sort movies by popularity</string>
     <string name="sort_mode">sort_mode</string>
     <string name="sharedPrefFileName">com.and.blf.popularmovies.PREFERENCE_FILE</string>
-    <string name="sortByPopularity">sortByPopularity</string>
-    <string name="sortByRating">sortByRating</string>
+    <string name="sortByPopularity">popular</string>
+    <string name="sortByRating">top_rated</string>
 
     <string name="jsonNames_results">results</string>
     <string name="jsonNames_id">id</string>
