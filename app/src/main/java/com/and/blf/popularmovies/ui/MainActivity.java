@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         List<Movie> movieList = new ArrayList<>();
-        mLayoutManager = new GridLayoutManager(MainActivity.this, getcolumnCount());
+        mLayoutManager = new GridLayoutManager(MainActivity.this, getColumnCount());
         RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
         movieRecyclerView.setHasFixedSize(true);
         movieRecyclerView.setLayoutManager(mLayoutManager);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastCompletelyVisibleItemPosition() && !isLoadingNow) {
+                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastVisibleItemPosition() && !isLoadingNow) {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         isLoadingNow = true;
@@ -152,15 +152,15 @@ public class MainActivity extends AppCompatActivity {
         setTitle(getString(R.string.app_name) + " (" + adding + ")");
     }
 
-    int getcolumnCount() {
+    int getColumnCount() {
+        int cardViewWidth = 166; //150 + 16
+        Resources r = getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, cardViewWidth, r.getDisplayMetrics());
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        Resources r = getResources();
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 166, r.getDisplayMetrics());
-
-        int width = metrics.widthPixels;
-        return width / px;
+        return metrics.widthPixels / px;
     }
 
 }
