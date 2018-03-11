@@ -1,12 +1,12 @@
 package com.and.blf.popularmovies.ui;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -34,6 +34,33 @@ public class MainActivity extends AppCompatActivity {
     boolean isLoadingNow = false;
     ProgressBar mLoadingIndicator;
 
+    private BottomNavigationView botNavView;
+
+    //listener for BottomNavigationView
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_popular:
+                    curPageNum = 1;
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    setAppTitle("popular");
+                    SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByPopularity));
+                    loadMovies(getString(R.string.sortByPopularity), true);
+                    return true;
+                case R.id.navigation_top_rated:
+                    curPageNum = 1;
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    setAppTitle("top_rated");
+                    SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByRating));
+                    loadMovies(getString(R.string.sortByRating), true);
+                    return true;
+            }
+            return false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
         movieService = MovieNetworkUtils.getMovieService();
 
-        loadMovies(SharedPreferencesUtils.readFromSharedPreferences(this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
+        botNavView = findViewById(R.id.navigation);
+        botNavView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        setBottomNavigationViewSelectedItem();
 
         //endless scroll
         movieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -67,8 +96,31 @@ public class MainActivity extends AppCompatActivity {
                         mLoadingIndicator.setVisibility(View.GONE);
                     }
                 }
+                if (dy < 0) {
+                    botNavView.setVisibility(View.VISIBLE);
+                } else {
+                    botNavView.setVisibility(View.GONE);
+                }
             }
         });
+    }
+
+    private void setBottomNavigationViewSelectedItem() {
+        String previousSortSetting = SharedPreferencesUtils.readFromSharedPreferences(this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode));
+        switch (previousSortSetting) {
+            case "popular":
+                botNavView.setSelectedItemId(R.id.navigation_popular);
+                setAppTitle("Popular");
+                break;
+            case "top_rated":
+                botNavView.setSelectedItemId(R.id.navigation_top_rated);
+                setAppTitle("Top rated");
+                break;
+            default:
+                botNavView.setSelectedItemId(R.id.navigation_popular);
+                setAppTitle("popular");
+        }
+
     }
 
     private void loadMovies(String endPoint, final boolean reloadAdapterCollection) {
@@ -91,46 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 mLoadingIndicator.setVisibility(View.GONE);
             }
         });
-    }
-
-    //Sorting menu handling
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.movie_sort_menu, menu);
-        String previousSortSetting = SharedPreferencesUtils.readFromSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode));
-        switch (previousSortSetting){
-            case "popular":
-                menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
-                setAppTitle("popular");
-                break;
-            case "rated":
-                menu.findItem(R.id.sortByRatingMenuItem).setChecked(true);
-                setAppTitle("top_rated");
-                break;
-            default:
-                menu.findItem(R.id.sortByPopularityMenuItem).setChecked(true);
-                setAppTitle("popular");
-        }
-        return true;
-    }
-
-    public void onSortByPopularityMenuItemClick(MenuItem menuItem){
-        curPageNum = 1;
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-        menuItem.setChecked(true);
-        setAppTitle("popular");
-        SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByPopularity));
-        loadMovies(getString(R.string.sortByPopularity), true);
-    }
-
-    public void onSortByRatingMenuItemClick(MenuItem menuItem){
-        curPageNum = 1;
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-        menuItem.setChecked(true);
-        setAppTitle("top_rated");
-        SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByRating));
-        loadMovies(getString(R.string.sortByRating), true);
     }
 
     private void setAppTitle(String adding){

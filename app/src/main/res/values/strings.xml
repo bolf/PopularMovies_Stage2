@@ -25,4 +25,7 @@
     <string name="IO_EXCEPTION">IOException</string>
     <string name="JSON_EXCEPTION">JSONException</string>
     <string name="PARSE_EXCEPTION">ParseException</string>
+
+    <string name="title_top_rated">Top rated</string>
+    <string name="title_popular">Popular</string>
 </resources>
