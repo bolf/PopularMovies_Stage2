@@ -1,12 +1,15 @@
 package com.and.blf.popularmovies.ui;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         List<Movie> movieList = new ArrayList<>();
-        mLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        mLayoutManager = new GridLayoutManager(MainActivity.this, getcolumnCount());
         RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
         movieRecyclerView.setHasFixedSize(true);
         movieRecyclerView.setLayoutManager(mLayoutManager);
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMovies(String endPoint, final boolean reloadAdapterCollection) {
-        Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "***", curPageNum);
+        Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "1d0f6fe52ffd029bdfb40c1c3c780b73", curPageNum);
         wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
             @Override
@@ -148,4 +151,16 @@ public class MainActivity extends AppCompatActivity {
     private void setAppTitle(String adding){
         setTitle(getString(R.string.app_name) + " (" + adding + ")");
     }
+
+    int getcolumnCount() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        Resources r = getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 166, r.getDisplayMetrics());
+
+        int width = metrics.widthPixels;
+        return width / px;
+    }
+
 }
