@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadMovies(String endPoint, final boolean reloadAdapterCollection) {
-        Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "1d0f6fe52ffd029bdfb40c1c3c780b73", curPageNum);
+        Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "***", curPageNum);
         wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
             @Override
