@@ -1,8 +1,5 @@
 package com.and.blf.popularmovies.ui;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,8 +25,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     MovieRecyclerViewAdapter mAdapter;
@@ -54,22 +49,18 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MovieRecyclerViewAdapter(movieList);
         movieRecyclerView.setAdapter(mAdapter);
 
-        movieService = new Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/")
-                .addConverterFactory(MoshiConverterFactory.create())
-                .client(MovieNetworkUtils.getHttpClient())
-                .build()
-                .create(MovieService.class);
+        movieService = MovieNetworkUtils.getMovieService();
 
         loadMovies(SharedPreferencesUtils.readFromSharedPreferences(this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
 
+        //endless scroll
         movieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastCompletelyVisibleItemPosition() && !isLoadingNow) {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
-                    if (networkIsAvailable()) {
+                    if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         isLoadingNow = true;
                         loadMovies(SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
                     } else if (dy < 0) {
@@ -137,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         curPageNum = 1;
         mLoadingIndicator.setVisibility(View.VISIBLE);
         menuItem.setChecked(true);
-        setAppTitle("rated");
+        setAppTitle("top_rated");
         SharedPreferencesUtils.writeToSharedPreferences(this,getString(R.string.sharedPrefFileName),getString(R.string.sort_mode),getString(R.string.sortByRating));
         loadMovies(getString(R.string.sortByRating), true);
     }
@@ -145,12 +136,4 @@ public class MainActivity extends AppCompatActivity {
     private void setAppTitle(String adding){
         setTitle(getString(R.string.app_name) + " (" + adding + ")");
     }
-
-    private boolean networkIsAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
 }
