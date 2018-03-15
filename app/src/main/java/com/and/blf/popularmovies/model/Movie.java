@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable {
+    private int localDbId;
     private int id;
     private String title;
     private String poster_path;
@@ -14,7 +15,8 @@ public class Movie implements Parcelable {
 
     public Movie(){}
 
-    public Movie(int id, String title, String posterPath, String backdropPath, String overview, float voteAverage, String releaseDate) {
+    public Movie(int localDbId, int id, String title, String posterPath, String backdropPath, String overview, float voteAverage, String releaseDate) {
+        this.localDbId = localDbId;
         this.id = id;
         this.title = title;
         this.poster_path = posterPath;
@@ -25,6 +27,7 @@ public class Movie implements Parcelable {
     }
 
     protected Movie(Parcel in) {
+        localDbId = in.readInt();
         id = in.readInt();
         title = in.readString();
         poster_path = in.readString();
@@ -53,6 +56,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(localDbId);
         dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(poster_path);
@@ -60,6 +64,14 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeFloat(vote_average);
         dest.writeString(release_date);
+    }
+
+    public int getLocalDbId() {
+        return localDbId;
+    }
+
+    public void setLocalDbId(int localDbId) {
+        this.localDbId = localDbId;
     }
 
     public int getId() {
