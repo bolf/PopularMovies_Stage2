@@ -1,6 +1,5 @@
 package com.and.blf.popularmovies.ui;
 
-import android.content.AsyncQueryHandler;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
@@ -35,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int ASYNC_READ_ID = 7;
+
     public final MovieRecyclerViewAdapter mAdapter = new MovieRecyclerViewAdapter(new ArrayList<Movie>());
     MovieService movieService;
     GridLayoutManager mLayoutManager;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_popular:
                     curPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
-                    setAppTitle("popular");
+                    setAppTitle(getString(R.string.title_popular));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByPopularity));
                     curSortMode = getString(R.string.sortByPopularity);
                     loadMovies(getString(R.string.sortByPopularity), true);
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_top_rated:
                     curPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
-                    setAppTitle("top rated");
+                    setAppTitle(getString(R.string.title_top_rated));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByRating));
                     curSortMode = getString(R.string.sortByRating);
                     loadMovies(getString(R.string.sortByRating), true);
@@ -75,14 +74,14 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sort_favorite));
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MainActivity.this));
-                    asyncQueryHandler.startQuery(ASYNC_READ_ID,
+                    asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ID,
                             null,
                             MovieContract.FavoriteMovieEntry.CONTENT_URI,
                             null,
                             null,
                             null,
                             null);
-                    setAppTitle("marked");
+                    setAppTitle(getString(R.string.title_favorite));
                     return true;
             }
             return false;
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAppTitle(String adding){
-        setTitle(getString(R.string.app_name) + " (" + adding + ")");
+        setTitle(adding + " Movies");
     }
 
     int getColumnCount() {

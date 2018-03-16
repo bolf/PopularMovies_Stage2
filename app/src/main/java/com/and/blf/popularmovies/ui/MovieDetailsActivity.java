@@ -1,30 +1,40 @@
 package com.and.blf.popularmovies.ui;
 
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
+import com.and.blf.popularmovies.persistence.MovieContract;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import java.lang.ref.WeakReference;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
 
+    private ImageButton imgBut;
     private Movie movie;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+
+        imgBut = findViewById(R.id.imageButton_mark_favorite);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -33,7 +43,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         try {
             movie = intent.getParcelableExtra(MOVIE_PARCEL);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Log.d(getString(R.string.PARCELABLE_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
@@ -55,9 +65,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         voteAverageTv.setText(getString(R.string.Raiting_tv) + Float.valueOf(movie.getVoteAverage()).toString());
 
         ImageView backdropIv = findViewById(R.id.backdrop);
-        try{
+        try {
             Picasso.with(this)
-                    .load(MovieNetworkUtils.buildImageRequestUrl("w300",movie.getBackdropPath()))
+                    .load(MovieNetworkUtils.buildImageRequestUrl("w300", movie.getBackdropPath()))
                     .into(backdropIv);
         } catch (NullPointerException e) {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
@@ -65,9 +75,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
 
         ImageView posterIv = findViewById(R.id.poster);
-        try{
+        try {
             Picasso.with(this)
-                    .load(MovieNetworkUtils.buildImageRequestUrl("w200",movie.getPosterPath()))
+                    .load(MovieNetworkUtils.buildImageRequestUrl("w200", movie.getPosterPath()))
                     .into(posterIv);
         } catch (NullPointerException e) {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
@@ -81,6 +91,27 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     public void mark_favorite(View view) {
-
+        MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
+        ContentValues movieStruct = new ContentValues();
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movie.getId());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+        asyncQueryHandler.startInsert(MovieAsyncQueryHandler.ASYNC_WRITE_ID,
+                null,
+                MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                movieStruct);
     }
+
+    public void setFavoritedImage(boolean isFavorite) {
+        if (isFavorite) {
+            imgBut.setImageResource(R.drawable.ic_star_golden_24dp);
+        } else {
+            imgBut.setImageResource(R.drawable.ic_star_black_24dp);
+        }
+    }
+
 }
