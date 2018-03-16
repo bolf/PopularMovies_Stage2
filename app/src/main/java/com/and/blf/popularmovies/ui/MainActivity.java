@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
     MovieService movieService;
     GridLayoutManager mLayoutManager;
     int curPageNum = 1;
-    boolean isLoadingNow = false;
-    ProgressBar mLoadingIndicator;
+    public boolean isLoadingNow = false;
+    public ProgressBar mLoadingIndicator;
+
+    private String curSortMode;
 
     private BottomNavigationView botNavView;
 
@@ -56,16 +58,22 @@ public class MainActivity extends AppCompatActivity {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     setAppTitle("popular");
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByPopularity));
+                    curSortMode = getString(R.string.sortByPopularity);
                     loadMovies(getString(R.string.sortByPopularity), true);
                     return true;
                 case R.id.navigation_top_rated:
                     curPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
-                    setAppTitle("top_rated");
+                    setAppTitle("top rated");
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByRating));
+                    curSortMode = getString(R.string.sortByRating);
                     loadMovies(getString(R.string.sortByRating), true);
                     return true;
                 case R.id.navigation_marked:
+                    isLoadingNow = true;
+                    curSortMode = getString(R.string.sort_favorite);
+                    SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sort_favorite));
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
                     MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MainActivity.this));
                     asyncQueryHandler.startQuery(ASYNC_READ_ID,
                             null,
@@ -105,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastVisibleItemPosition() && !isLoadingNow) {
+                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastVisibleItemPosition() && !isLoadingNow && curSortMode != getString(R.string.sort_favorite)) {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         isLoadingNow = true;
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                         mLoadingIndicator.setVisibility(View.GONE);
                     }
                 }
-                if (dy < 0) {
+                if (dy < 0 || mAdapter.getItemCount() == 0) {
                     botNavView.setVisibility(View.VISIBLE);
                 } else {
                     botNavView.setVisibility(View.GONE);

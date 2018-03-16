@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,9 @@ import com.squareup.picasso.Picasso;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
+
+    private Movie movie;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +31,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             closeOnError();
         }
 
-        Movie movie = null;
         try {
             movie = intent.getParcelableExtra(MOVIE_PARCEL);
         }catch (NullPointerException e){
@@ -75,5 +78,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void closeOnError() {
         finish();
         Toast.makeText(this, "Couldn't get the detailed movie", Toast.LENGTH_SHORT).show();
+    }
+
+    public void mark_favorite(View view) {
+
     }
 }

@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.view.View;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.model.Movie;
@@ -47,6 +48,8 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
         }
         cursor.close();
         ((MainActivity) weakContext.get()).mAdapter.setMovieList(movies, true);
+        ((MainActivity) weakContext.get()).mLoadingIndicator.setVisibility(View.GONE);
+        ((MainActivity) weakContext.get()).isLoadingNow = false;
     }
 
     @Override

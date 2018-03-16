@@ -31,10 +31,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@android:color/darker_gray"
+        app:itemBackground="@color/colorPrimary"
+        app:itemIconTint="@drawable/b_n_v_colors"
+        app:itemTextColor="@drawable/b_n_v_colors"
         app:layout_constraintBottom_toBottomOf="@+id/rvMovies"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation"
+        android:background="?android:attr/windowBackground"
+        android:foreground="?attr/selectableItemBackground" />
 
 </android.support.constraint.ConstraintLayout>

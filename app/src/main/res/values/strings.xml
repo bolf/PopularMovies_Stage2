@@ -8,6 +8,7 @@
     <string name="sharedPrefFileName">com.and.blf.popularmovies.PREFERENCE_FILE</string>
     <string name="sortByPopularity">popular</string>
     <string name="sortByRating">top_rated</string>
+    <string name="sort_favorite">favorite</string>
 
     <string name="jsonNames_results">results</string>
     <string name="jsonNames_id">id</string>
