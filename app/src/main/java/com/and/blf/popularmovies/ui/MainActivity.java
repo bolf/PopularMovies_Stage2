@@ -1,5 +1,7 @@
 package com.and.blf.popularmovies.ui;
 
+import android.content.AsyncQueryHandler;
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -17,11 +19,14 @@ import android.widget.ProgressBar;
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
 import com.and.blf.popularmovies.model.MovieWrapper;
+import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
+import com.and.blf.popularmovies.persistence.MovieContract;
 import com.and.blf.popularmovies.retrofit.MovieService;
 import com.and.blf.popularmovies.ui.recycler_view.MovieRecyclerViewAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.and.blf.popularmovies.utils.SharedPreferencesUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +35,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    MovieRecyclerViewAdapter mAdapter;
+    private static final int ASYNC_READ_ID = 7;
+    public final MovieRecyclerViewAdapter mAdapter = new MovieRecyclerViewAdapter(new ArrayList<Movie>());
     MovieService movieService;
     GridLayoutManager mLayoutManager;
     int curPageNum = 1;
@@ -59,6 +65,17 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByRating));
                     loadMovies(getString(R.string.sortByRating), true);
                     return true;
+                case R.id.navigation_marked:
+                    MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MainActivity.this));
+                    asyncQueryHandler.startQuery(ASYNC_READ_ID,
+                            null,
+                            MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+                    setAppTitle("marked");
+                    return true;
             }
             return false;
         }
@@ -71,12 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
-        List<Movie> movieList = new ArrayList<>();
         mLayoutManager = new GridLayoutManager(MainActivity.this, getColumnCount());
         RecyclerView movieRecyclerView = findViewById(R.id.rvMovies);
         movieRecyclerView.setHasFixedSize(true);
         movieRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MovieRecyclerViewAdapter(movieList);
         movieRecyclerView.setAdapter(mAdapter);
 
         movieService = MovieNetworkUtils.getMovieService();

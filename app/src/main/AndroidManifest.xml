@@ -20,6 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MovieDetailsActivity" />
+
+        <provider
+            android:authorities="com.and.blf.popularmovies"
+            android:name=".persistence.FavoriteMovieContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

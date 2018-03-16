@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.ui.MainActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
             }
         }
         cursor.close();
+        ((MainActivity) weakContext.get()).mAdapter.setMovieList(movies, true);
     }
 
     @Override

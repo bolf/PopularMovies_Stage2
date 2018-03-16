@@ -46,8 +46,10 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toBottomOf="@+id/backdrop"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="Some title goes here" />
 
         <TextView
@@ -89,6 +91,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_title"
             tools:text="average vote 7.4" />
+
+        <ImageButton
+            android:id="@+id/imageButton_mark_favorite"
+            style="@android:style/Widget.Holo.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_title"
+            app:layout_constraintEnd_toEndOf="@+id/movie_title"
+            app:srcCompat="@drawable/ic_star_golden_24dp" />
+
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class MovieContract {
 
-    public static final String AUTHORITY = "com.and.blf.sql";
+    public static final String AUTHORITY = "com.and.blf.popularmovies";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String PATH_FAVORITE_MOVIES = "movies";
 
