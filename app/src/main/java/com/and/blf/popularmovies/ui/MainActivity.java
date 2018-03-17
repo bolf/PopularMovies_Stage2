@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sort_favorite));
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MainActivity.this));
-                    asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ID,
+                    asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ALL_ID,
                             null,
                             MovieContract.FavoriteMovieEntry.CONTENT_URI,
                             null,

@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAsyncQueryHandler extends AsyncQueryHandler {
-    public static final int ASYNC_READ_ID = 7;
+    public static final int ASYNC_READ_ONE_ID = 5;
+    public static final int ASYNC_READ_ALL_ID = 7;
     public static final int ASYNC_WRITE_ID = 9;
     WeakReference<Context> weakContext;
 
@@ -34,31 +35,40 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
     @Override
     protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
         super.onQueryComplete(token, cookie, cursor);
-        List<Movie> movies = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            movies.add(new Movie(
-                    cursor.getInt(0),
-                    cursor.getInt(1),
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getFloat(6),
-                    cursor.getString(7)
-            ));
+        if (token == ASYNC_READ_ALL_ID) {
+            List<Movie> movies = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                movies.add(new Movie(
+                        cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getFloat(6),
+                        cursor.getString(7)
+                ));
+            }
+            ((MainActivity) weakContext.get()).mAdapter.setMovieList(movies, true);
+            ((MainActivity) weakContext.get()).mLoadingIndicator.setVisibility(View.GONE);
+            ((MainActivity) weakContext.get()).isLoadingNow = false;
+        } else if (token == ASYNC_READ_ONE_ID) {
+            int _id = -1;
+            if (cursor.moveToFirst()) {
+                _id = cursor.getInt(0);
+            }
+            ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(_id);
         }
-
         cursor.close();
-        ((MainActivity) weakContext.get()).mAdapter.setMovieList(movies, true);
-        ((MainActivity) weakContext.get()).mLoadingIndicator.setVisibility(View.GONE);
-        ((MainActivity) weakContext.get()).isLoadingNow = false;
     }
 
     @Override
     protected void onInsertComplete(int token, Object cookie, Uri uri) {
         super.onInsertComplete(token, cookie, uri);
-        ((MovieDetailsActivity) weakContext.get()).setFavoritedImage(true);
-        Toast.makeText(weakContext.get(), "inserted!", Toast.LENGTH_SHORT).show();
+        ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(-1);
+        int _id = Integer.parseInt(uri.toString().replace(MovieContract.FavoriteMovieEntry.CONTENT_URI.toString() + "/", ""));
+        ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(_id);
+        Toast.makeText(weakContext.get(), "added to favorite", Toast.LENGTH_SHORT).show();
     }
 
     @Override

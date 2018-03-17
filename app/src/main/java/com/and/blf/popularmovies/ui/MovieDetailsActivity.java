@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -48,6 +49,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
             closeOnError();
         }
         populateUI(movie);
+
+        MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
+        asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ONE_ID,
+                null,
+                MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                new String[]{MovieContract.FavoriteMovieEntry._ID},
+                MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[]{String.valueOf(movie.getId())},
+                null);
     }
 
     private void populateUI(Movie movie) {
@@ -106,12 +116,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 movieStruct);
     }
 
-    public void setFavoritedImage(boolean isFavorite) {
-        if (isFavorite) {
+    public void setMovieLocalDbId(int id) {
+        movie.setLocalDbId(id);
+        if (id > -1) {
             imgBut.setImageResource(R.drawable.ic_star_golden_24dp);
         } else {
-            imgBut.setImageResource(R.drawable.ic_star_black_24dp);
+            imgBut.setImageResource(R.drawable.ic_star_border_black_24dp);
         }
     }
-
 }
