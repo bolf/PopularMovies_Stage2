@@ -20,6 +20,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
     public static final int ASYNC_READ_ONE_ID = 5;
     public static final int ASYNC_READ_ALL_ID = 7;
     public static final int ASYNC_WRITE_ID = 9;
+    public static final int ASYNC_DELETE_ID = 11;
     WeakReference<Context> weakContext;
 
     public MovieAsyncQueryHandler(ContentResolver cr, WeakReference<Context> weakContext) {
@@ -68,7 +69,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
         ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(-1);
         int _id = Integer.parseInt(uri.toString().replace(MovieContract.FavoriteMovieEntry.CONTENT_URI.toString() + "/", ""));
         ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(_id);
-        Toast.makeText(weakContext.get(), "added to favorite", Toast.LENGTH_SHORT).show();
+        Toast.makeText(weakContext.get(), "added to favorites", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -79,5 +80,9 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
     @Override
     protected void onDeleteComplete(int token, Object cookie, int result) {
         super.onDeleteComplete(token, cookie, result);
+        if (result > 0) {
+            ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(-1);
+            Toast.makeText(weakContext.get(), "removed from favorites", Toast.LENGTH_SHORT).show();
+        }
     }
 }

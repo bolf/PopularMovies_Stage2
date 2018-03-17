@@ -3,9 +3,11 @@ package com.and.blf.popularmovies.ui;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -101,19 +103,39 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     public void mark_favorite(View view) {
-        MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
-        ContentValues movieStruct = new ContentValues();
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movie.getId());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
-        movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
-        asyncQueryHandler.startInsert(MovieAsyncQueryHandler.ASYNC_WRITE_ID,
-                null,
-                MovieContract.FavoriteMovieEntry.CONTENT_URI,
-                movieStruct);
+        if (movie.getLocalDbId() > -1) { //it's removal
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_local_movies_black_24dp)
+                    .setTitle("Removing from favorites")
+                    .setMessage("Are you sure you want to remove " + movie.getTitle() + " from the favorite movie list?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MovieDetailsActivity.this));
+                            asyncQueryHandler.startDelete(MovieAsyncQueryHandler.ASYNC_DELETE_ID,
+                                    null,
+                                    MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                                    "_id = ?",
+                                    new String[]{String.valueOf(movie.getLocalDbId())});
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        } else {
+            MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
+            ContentValues movieStruct = new ContentValues();
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movie.getId());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+            asyncQueryHandler.startInsert(MovieAsyncQueryHandler.ASYNC_WRITE_ID,
+                    null,
+                    MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                    movieStruct);
+        }
     }
 
     public void setMovieLocalDbId(int id) {
