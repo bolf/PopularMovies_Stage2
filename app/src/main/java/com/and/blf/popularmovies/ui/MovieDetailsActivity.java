@@ -21,6 +21,7 @@ import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
+import com.and.blf.popularmovies.ui.recycler_view.MovieRecyclerViewAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -28,7 +29,6 @@ import java.lang.ref.WeakReference;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
-
     private ImageButton imgBut;
     private Movie movie;
 
@@ -51,15 +51,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             closeOnError();
         }
         populateUI(movie);
-
-        MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
-        asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ONE_ID,
-                null,
-                MovieContract.FavoriteMovieEntry.CONTENT_URI,
-                new String[]{MovieContract.FavoriteMovieEntry._ID},
-                MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID + " = ?",
-                new String[]{String.valueOf(movie.getId())},
-                null);
     }
 
     private void populateUI(Movie movie) {
@@ -95,6 +86,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
+        setMovieStarVisibility();
     }
 
     private void closeOnError() {
@@ -138,12 +130,20 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void setMovieLocalDbId(int id) {
-        movie.setLocalDbId(id);
-        if (id > -1) {
+    public void setMovieStarVisibility(){
+        if (movie.getLocalDbId() > -1) {
             imgBut.setImageResource(R.drawable.ic_star_golden_24dp);
         } else {
             imgBut.setImageResource(R.drawable.ic_star_border_black_24dp);
         }
+    }
+
+    public void setMovieLocalDbId(int id) {
+        movie.setLocalDbId(id);
+        setMovieStarVisibility();
+        Intent intent = new Intent();
+        intent.putExtra("LocalDbmovieId",id);
+        intent.putExtra("movieId",movie.getId());
+        setResult(RESULT_OK, intent);
     }
 }

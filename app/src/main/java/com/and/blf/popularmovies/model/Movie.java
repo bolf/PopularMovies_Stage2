@@ -3,6 +3,8 @@ package com.and.blf.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class Movie implements Parcelable {
     private int localDbId;
     private int id;
@@ -128,5 +130,13 @@ public class Movie implements Parcelable {
 
     public void setReleaseDate(String releaseDate) {
         this.release_date = releaseDate;
+    }
+
+    public static String[] getStringIdArrayOutOfMovieList(List<Movie> lst){
+        String[] strArr = new String[lst.size()];
+        for(int i = 0; i < lst.size(); i++){
+            strArr[i] = String.valueOf(lst.get(i).getId());
+        }
+        return  strArr;
     }
 }

@@ -1,6 +1,7 @@
 package com.and.blf.popularmovies.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
@@ -27,6 +30,7 @@ import com.and.blf.popularmovies.utils.SharedPreferencesUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -53,28 +57,31 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_popular:
+                    if (curSortMode == getString(R.string.sortByPopularity)){break;}
                     curPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     setAppTitle(getString(R.string.title_popular));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByPopularity));
                     curSortMode = getString(R.string.sortByPopularity);
-                    loadMovies(getString(R.string.sortByPopularity), true);
+                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortByPopularity), true);
                     return true;
                 case R.id.navigation_top_rated:
+                    if (curSortMode == getString(R.string.sortByRating)){break;}
                     curPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     setAppTitle(getString(R.string.title_top_rated));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortByRating));
                     curSortMode = getString(R.string.sortByRating);
-                    loadMovies(getString(R.string.sortByRating), true);
+                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortByRating), true);
                     return true;
                 case R.id.navigation_marked:
+                    if (curSortMode == getString(R.string.sort_favorite)){break;}
                     isLoadingNow = true;
                     curSortMode = getString(R.string.sort_favorite);
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sort_favorite));
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MainActivity.this));
-                    asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_READ_ALL_ID,
+                    asyncQueryHandler.startQuery(MovieAsyncQueryHandler.ASYNC_GET_ALL_FAVORITES,
                             null,
                             MovieContract.FavoriteMovieEntry.CONTENT_URI,
                             null,
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         isLoadingNow = true;
-                        loadMovies(SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
+                        loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST,SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
                     } else if (dy < 0) {
                         mLoadingIndicator.setVisibility(View.GONE);
                     }
@@ -148,14 +155,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void loadMovies(String endPoint, final boolean reloadAdapterCollection) {
+    private void loadMovies(final int requestType, String endPoint, final boolean reloadAdapterCollection) {
         Call<MovieWrapper> wrapperCall = movieService.getMovies(endPoint, "1d0f6fe52ffd029bdfb40c1c3c780b73", curPageNum);
         wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
             @Override
             public void onResponse(Call<MovieWrapper> call, Response<MovieWrapper> response) {
                 List<Movie> lst = response.body().getResults();
-                mAdapter.setMovieList(lst, reloadAdapterCollection);
+                mAdapter.updateMovieList(requestType, lst, reloadAdapterCollection, getContentResolver(),new WeakReference<Context>(MainActivity.this));
                 curPageNum++;
                 isLoadingNow = false;
                 mLoadingIndicator.setVisibility(View.GONE);
@@ -185,4 +192,12 @@ public class MainActivity extends AppCompatActivity {
         return metrics.widthPixels / px;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data != null){
+            int locDbMovieId = data.getIntExtra("LocalDbmovieId", -1);
+            int movieId = data.getIntExtra("movieId", -1);
+            mAdapter.setLocalDbIdOnItem(movieId, locDbMovieId);
+        }
+    }
 }

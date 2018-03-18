@@ -1,6 +1,6 @@
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
 
     android:layout_width="match_parent"
@@ -9,7 +9,9 @@
     app:cardUseCompatPadding="true"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
-    app:cardCornerRadius="2dp">
+    app:cardCornerRadius="2dp"
+    card_view:cardBackgroundColor="@android:color/transparent"
+    card_view:cardElevation="2dp">
 
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -31,18 +33,29 @@
         <TextView
             android:id="@+id/movie_title"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="45dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:lineSpacingExtra="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#DE000000"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_poster_thumbnail" />
+
+        <ImageView
+            android:id="@+id/favoriteStar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            card_view:srcCompat="@drawable/ic_star_golden_24dp"
+            android:visibility="gone"/>
 
     </android.support.constraint.ConstraintLayout>
 
