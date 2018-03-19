@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -19,13 +18,20 @@ import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.model.MovieReview;
+import com.and.blf.popularmovies.model.MovieReviewWrapper;
+import com.and.blf.popularmovies.model.MovieWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
-import com.and.blf.popularmovies.ui.recycler_view.MovieRecyclerViewAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
@@ -87,6 +93,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
             closeOnError();
         }
         setMovieStarVisibility();
+
+        if(MovieNetworkUtils.networkIsAvailable(this)){
+            loadMovieReviews();
+        }
     }
 
     private void closeOnError() {
@@ -146,4 +156,21 @@ public class MovieDetailsActivity extends AppCompatActivity {
         intent.putExtra("movieId",movie.getId());
         setResult(RESULT_OK, intent);
     }
+
+    private void loadMovieReviews() {
+        Call<MovieReviewWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getReviews(String.valueOf(movie.getId()), "1d0f6fe52ffd029bdfb40c1c3c780b73");
+        wrapperCall.enqueue(new Callback<MovieReviewWrapper>() {
+            @Override
+            public void onResponse(Call<MovieReviewWrapper> call, Response<MovieReviewWrapper> response) {
+                List<MovieReview> lst = response.body().getResults();
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieReviewWrapper> call, Throwable t) {
+                Log.d("ON_FAILURE", t.getMessage());
+            }
+        });
+    }
+
 }
