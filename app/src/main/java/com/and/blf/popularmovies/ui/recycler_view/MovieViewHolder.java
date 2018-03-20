@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.and.blf.popularmovies.R;
-import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.model.movie.Movie;
 import com.and.blf.popularmovies.ui.MainActivity;
 import com.and.blf.popularmovies.ui.MovieDetailsActivity;
 

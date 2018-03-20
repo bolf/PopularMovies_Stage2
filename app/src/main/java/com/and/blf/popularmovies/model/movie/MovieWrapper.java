@@ -1,4 +1,6 @@
-package com.and.blf.popularmovies.model;
+package com.and.blf.popularmovies.model.movie;
+
+import com.and.blf.popularmovies.model.movie.Movie;
 
 import java.util.List;
 

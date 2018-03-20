@@ -3,16 +3,14 @@ package com.and.blf.popularmovies.persistence;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
-import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.model.movie.Movie;
 import com.and.blf.popularmovies.ui.MainActivity;
 import com.and.blf.popularmovies.ui.MovieDetailsActivity;
-import com.and.blf.popularmovies.ui.recycler_view.MovieRecyclerViewAdapter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

@@ -107,7 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="setVisible_reviews_frame"
-        android:text="REVIEws"
+        android:text="REVIEWS"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"/>
 
@@ -128,5 +128,24 @@
         android:dividerHeight="1dp"
         android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorRight" />
     </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="setVisible_reviews_frame"
+        android:text="TRAILERS"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+    <FrameLayout
+        android:id="@+id/trailers_frame"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/trailer_viewPager"/>
+
+        </FrameLayout>
 </LinearLayout>
 </ScrollView>

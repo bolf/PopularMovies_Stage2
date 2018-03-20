@@ -1,4 +1,4 @@
-package com.and.blf.popularmovies.model;
+package com.and.blf.popularmovies.model.review;
 
 public class MovieReview {
     private String author;

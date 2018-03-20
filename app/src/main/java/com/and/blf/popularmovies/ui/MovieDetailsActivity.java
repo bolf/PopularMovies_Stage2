@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,12 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
-import com.and.blf.popularmovies.model.Movie;
-import com.and.blf.popularmovies.model.MovieReview;
-import com.and.blf.popularmovies.model.MovieReviewWrapper;
-import com.and.blf.popularmovies.model.MovieWrapper;
+import com.and.blf.popularmovies.model.movie.Movie;
+import com.and.blf.popularmovies.model.review.MovieReview;
+import com.and.blf.popularmovies.model.review.MovieReviewWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
+import com.and.blf.popularmovies.ui.ViewPager.MovieTrailerPagerAdapter;
 import com.and.blf.popularmovies.ui.expandable_list_view.CustomExpandableListAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -45,7 +46,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private Movie movie;
     private ExpandableListView reviewExpandableListView;
     List<String> expandableListTitle;
-    HashMap<String, List<String>> expandableListDetail;
     ExpandableListAdapter expandableListAdapter;
 
     @Override
@@ -106,7 +106,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         if(MovieNetworkUtils.networkIsAvailable(this)){
             loadMovieReviews();
+            loadTrailers();
         }
+    }
+
+    private void loadTrailers() {
+        ViewPager viewPager = findViewById(R.id.trailer_viewPager);
+        //TODO get refs though retrofit
+        String[] trailerImages = new String[]{};
+        viewPager.setAdapter(new MovieTrailerPagerAdapter(MovieDetailsActivity.this, trailerImages));
     }
 
     private void closeOnError() {

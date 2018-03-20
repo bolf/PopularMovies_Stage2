@@ -9,10 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.and.blf.popularmovies.R;
-import com.and.blf.popularmovies.model.Movie;
+import com.and.blf.popularmovies.model.movie.Movie;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
-import com.and.blf.popularmovies.ui.MainActivity;
 import com.and.blf.popularmovies.utils.*;
 import com.squareup.picasso.Picasso;
 

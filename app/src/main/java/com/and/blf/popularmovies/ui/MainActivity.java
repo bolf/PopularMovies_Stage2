@@ -9,18 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
-import com.and.blf.popularmovies.model.Movie;
-import com.and.blf.popularmovies.model.MovieWrapper;
+import com.and.blf.popularmovies.model.movie.Movie;
+import com.and.blf.popularmovies.model.movie.MovieWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
 import com.and.blf.popularmovies.retrofit.MovieService;
@@ -30,7 +28,6 @@ import com.and.blf.popularmovies.utils.SharedPreferencesUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
