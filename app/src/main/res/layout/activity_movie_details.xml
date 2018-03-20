@@ -4,112 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
-        android:id="@+id/backdrop"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/description_background_picture"
-        app:layout_constraintDimensionRatio="16:9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/backgrounds/scenic" />
-
-    <ImageView
-        android:id="@+id/poster"
-        android:layout_width="107dp"
-        android:layout_height="160dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:contentDescription="@string/description_foreground_picture"
-        app:layout_constraintBottom_toBottomOf="@+id/backdrop"
-        app:layout_constraintDimensionRatio="w,2:3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backdrop"
-        tools:src="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/movie_title"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintBottom_toBottomOf="@+id/poster"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/poster"
-        app:layout_constraintTop_toBottomOf="@+id/backdrop"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="Some title goes here" />
-
-    <TextView
-        android:id="@+id/overview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/release_date"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="After the events of Captain America: Civil War, King T'Challa returns home to the reclusive, technologically advanced African nation of Wakanda to serve as his country's new leader. However, T'Challa soon finds that he is challenged for the throne from factions within his own country. When two foes conspire to destroy Wakanda, the hero known as Black Panther must team up with C.I.A. agent Everett K. Ross and members of the Dora Milaje, Wakandan special forces, to prevent Wakanda from being dragged into a world war." />
-
-    <TextView
-        android:id="@+id/release_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/movie_title"
-        tools:text="released 2018-02-13" />
-
-    <TextView
-        android:id="@+id/vote_average"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/movie_title"
-        tools:text="average vote 7.4" />
-
-    <ImageButton
-        android:id="@+id/imageButton_mark_favorite"
-        style="@android:style/Widget.Holo.ImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:elevation="0dp"
-        android:onClick="mark_favorite"
-        app:layout_constraintBottom_toBottomOf="@+id/movie_title"
-        app:layout_constraintEnd_toEndOf="@+id/movie_title"
-        app:srcCompat="@drawable/ic_star_golden_24dp" />
-
-        <ExpandableListView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/description_background_picture"
+            app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="107dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/description_foreground_picture"
+            app:layout_constraintBottom_toBottomOf="@+id/backdrop"
+            app:layout_constraintDimensionRatio="w,2:3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backdrop"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintBottom_toBottomOf="@+id/poster"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/poster"
+            app:layout_constraintTop_toBottomOf="@+id/backdrop"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Some title goes here" />
+
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/holo_green_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            tools:text="released 2018-02-13" />
+
+        <TextView
+            android:id="@+id/vote_average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/holo_green_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_title"
+            tools:text="average vote 7.4" />
+
+        <ImageButton
+            android:id="@+id/imageButton_mark_favorite"
+            style="@android:style/Widget.Holo.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:elevation="0dp"
+            android:onClick="mark_favorite"
+            app:layout_constraintBottom_toBottomOf="@+id/movie_title"
+            app:layout_constraintEnd_toEndOf="@+id/movie_title"
+            app:srcCompat="@drawable/ic_star_golden_24dp" />
+
+        <TextView
+            android:id="@+id/overview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/release_date"
+            tools:text="After the events of Captain America: Civil War, King T'Challa returns home to the reclusive, technologically advanced African nation of Wakanda to serve as his country's new leader. However, T'Challa soon finds that he is challenged for the throne from factions within his own country. When two foes conspire to destroy Wakanda, the hero known as Black Panther must team up with C.I.A. agent Everett K. Ross and members of the Dora Milaje, Wakandan special forces, to prevent Wakanda from being dragged into a world war." />
 
     </android.support.constraint.ConstraintLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="setVisible_reviews_frame"
+        android:text="REVIEws"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <FrameLayout
+        android:id="@+id/reviews_frame"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ExpandableListView
+        android:id="@+id/review_expandableListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+
+        android:divider="@android:color/black"
+        android:dividerHeight="1dp"
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorRight" />
+    </FrameLayout>
+</LinearLayout>
 </ScrollView>

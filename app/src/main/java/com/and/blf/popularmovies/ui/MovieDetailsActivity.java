@@ -11,6 +11,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,10 +26,13 @@ import com.and.blf.popularmovies.model.MovieReviewWrapper;
 import com.and.blf.popularmovies.model.MovieWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
+import com.and.blf.popularmovies.ui.expandable_list_view.CustomExpandableListAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,6 +43,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
     private ImageButton imgBut;
     private Movie movie;
+    private ExpandableListView reviewExpandableListView;
+    List<String> expandableListTitle;
+    HashMap<String, List<String>> expandableListDetail;
+    ExpandableListAdapter expandableListAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -163,7 +173,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MovieReviewWrapper> call, Response<MovieReviewWrapper> response) {
                 List<MovieReview> lst = response.body().getResults();
+                if(lst != null && lst.size() > 0 ){
+                    HashMap<String, List<String>> expandableListDetail = new HashMap<>();
+                    for(MovieReview mR : lst){
 
+                        List<String> review = new ArrayList<>();
+                        review.add(mR.getContent());
+
+                        expandableListDetail.put(mR.getAuthor(), review);
+                    }
+                    reviewExpandableListView = findViewById(R.id.review_expandableListView);
+
+                    expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                    expandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, expandableListTitle, expandableListDetail);
+                    reviewExpandableListView.setAdapter(expandableListAdapter);
+
+                }
             }
 
             @Override
@@ -173,4 +198,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
+    public void setVisible_reviews_frame(View view) {
+        FrameLayout reviewsFl = findViewById(R.id.reviews_frame);
+        if(reviewsFl.getVisibility() == View.GONE){
+            reviewsFl.setVisibility(View.VISIBLE);
+        }else{
+            reviewsFl.setVisibility(View.GONE);
+        }
+    }
 }
