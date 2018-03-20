@@ -16,10 +16,20 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 public class MovieNetworkUtils {
     private final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
+    private final static String TRAILER_THUMBNAIL_IMAGE_URI = "https://img.youtube.com/vi";
+
     public static String buildImageRequestUrl(String sizePart, String picPath){
         Uri requestUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
                 .appendPath(sizePart)
                 .appendEncodedPath(picPath)
+                .build();
+        return requestUri.toString();
+    }
+
+    public static String buildTrailerThumbnailRequestUrl(String trailerKey){
+        Uri requestUri = Uri.parse(TRAILER_THUMBNAIL_IMAGE_URI).buildUpon()
+                .appendPath(trailerKey)
+                .appendPath("sddefault.jpg")
                 .build();
         return requestUri.toString();
     }

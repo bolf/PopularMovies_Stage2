@@ -24,8 +24,10 @@ import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.movie.Movie;
 import com.and.blf.popularmovies.model.review.MovieReview;
 import com.and.blf.popularmovies.model.review.MovieReviewWrapper;
+import com.and.blf.popularmovies.model.trailer.TrailerWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
+import com.and.blf.popularmovies.retrofit.MovieService;
 import com.and.blf.popularmovies.ui.ViewPager.MovieTrailerPagerAdapter;
 import com.and.blf.popularmovies.ui.expandable_list_view.CustomExpandableListAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
@@ -45,8 +47,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private ImageButton imgBut;
     private Movie movie;
     private ExpandableListView reviewExpandableListView;
+    private TextView trailerHeader;
     List<String> expandableListTitle;
     ExpandableListAdapter expandableListAdapter;
+    String[] trailerLst;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,13 +112,26 @@ public class MovieDetailsActivity extends AppCompatActivity {
             loadMovieReviews();
             loadTrailers();
         }
+
+        trailerHeader = findViewById(R.id.trailerHeader);
     }
 
     private void loadTrailers() {
-        ViewPager viewPager = findViewById(R.id.trailer_viewPager);
-        //TODO get refs though retrofit
-        String[] trailerImages = new String[]{};
-        viewPager.setAdapter(new MovieTrailerPagerAdapter(MovieDetailsActivity.this, trailerImages));
+        Call<TrailerWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getTrailers(String.valueOf(movie.getId()), "1d0f6fe52ffd029bdfb40c1c3c780b73");
+        wrapperCall.enqueue(new Callback<TrailerWrapper>() {
+            @Override
+            public void onResponse(Call<TrailerWrapper> call, Response<TrailerWrapper> response) {
+                trailerLst = response.body().getMovieThumbnailsKeys();
+                if(trailerLst == null || trailerLst.length == 0){
+                    findViewById(R.id.trailerHeader).setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onFailure(Call<TrailerWrapper> call, Throwable t) {
+                //TODO logCat
+            }
+        });
+
     }
 
     private void closeOnError() {
@@ -204,6 +221,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 Log.d("ON_FAILURE", t.getMessage());
             }
         });
+    }
+
+    public void setVisible_trailers_frame(View view) {
+        findViewById(R.id.trailers_frame).setVisibility(View.VISIBLE);
+
+        ViewPager trailerViewPager = findViewById(R.id.trailer_viewPager);
+        MovieTrailerPagerAdapter tarilerAdapter = new MovieTrailerPagerAdapter(MovieDetailsActivity.this, trailerLst);
+        trailerViewPager.setAdapter(tarilerAdapter);
     }
 
     public void setVisible_reviews_frame(View view) {

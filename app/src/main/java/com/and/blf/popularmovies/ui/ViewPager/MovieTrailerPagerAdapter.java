@@ -10,22 +10,24 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.and.blf.popularmovies.R;
+import com.and.blf.popularmovies.utils.MovieNetworkUtils;
+import com.squareup.picasso.Picasso;
 
 public class MovieTrailerPagerAdapter extends PagerAdapter {
     Context context;
-    String images[];
+    String[] imageKeys;
     LayoutInflater layoutInflater;
 
 
-    public MovieTrailerPagerAdapter(Context context, String images[]) {
+    public MovieTrailerPagerAdapter(Context context, String imageKeys[]) {
         this.context = context;
-        this.images = images;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.imageKeys = imageKeys;
     }
 
     @Override
-    public int getCount() {
-        return images.length;
+    public int getCount(){
+        return imageKeys.length;
     }
 
     @Override
@@ -39,7 +41,9 @@ public class MovieTrailerPagerAdapter extends PagerAdapter {
 
         ImageView imageView = itemView.findViewById(R.id.trailer_imageView);
         //TODO get images from picasso
-        //imageView.setImageResource(images[position]);
+        Picasso.with(imageView.getContext())
+                .load(MovieNetworkUtils.buildTrailerThumbnailRequestUrl(imageKeys[position]))
+                .into(imageView);
 
         container.addView(itemView);
 
@@ -47,7 +51,7 @@ public class MovieTrailerPagerAdapter extends PagerAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "you clicked image " + (position + 1), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "you clicked image " + (position + 1), Toast.LENGTH_SHORT).show();
             }
         });
 
