@@ -7,9 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
@@ -17,6 +18,7 @@ import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +29,8 @@ import com.and.blf.popularmovies.model.review.MovieReviewWrapper;
 import com.and.blf.popularmovies.model.trailer.TrailerWrapper;
 import com.and.blf.popularmovies.persistence.MovieAsyncQueryHandler;
 import com.and.blf.popularmovies.persistence.MovieContract;
-import com.and.blf.popularmovies.retrofit.MovieService;
-import com.and.blf.popularmovies.ui.ViewPager.MovieTrailerPagerAdapter;
 import com.and.blf.popularmovies.ui.expandable_list_view.CustomExpandableListAdapter;
+import com.and.blf.popularmovies.ui.recycler_view.TrailerRecyclerViewAdapter;
 import com.and.blf.popularmovies.utils.MovieNetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -226,9 +227,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public void setVisible_trailers_frame(View view) {
         findViewById(R.id.trailers_frame).setVisibility(View.VISIBLE);
 
-        ViewPager trailerViewPager = findViewById(R.id.trailer_viewPager);
-        MovieTrailerPagerAdapter tarilerAdapter = new MovieTrailerPagerAdapter(MovieDetailsActivity.this, trailerLst);
-        trailerViewPager.setAdapter(tarilerAdapter);
+        RecyclerView trailerRecyclerView = findViewById(R.id.tariler_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        TrailerRecyclerViewAdapter trailerAdapter = new TrailerRecyclerViewAdapter(trailerLst);
+        trailerRecyclerView.setHasFixedSize(true);
+        trailerRecyclerView.setLayoutManager(linearLayoutManager);
+        trailerRecyclerView.setAdapter(trailerAdapter);
     }
 
     public void setVisible_reviews_frame(View view) {

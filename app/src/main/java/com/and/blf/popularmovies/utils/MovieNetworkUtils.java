@@ -29,7 +29,7 @@ public class MovieNetworkUtils {
     public static String buildTrailerThumbnailRequestUrl(String trailerKey){
         Uri requestUri = Uri.parse(TRAILER_THUMBNAIL_IMAGE_URI).buildUpon()
                 .appendPath(trailerKey)
-                .appendPath("sddefault.jpg")
+                .appendPath("hqdefault.jpg")
                 .build();
         return requestUri.toString();
     }
