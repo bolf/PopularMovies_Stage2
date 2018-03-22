@@ -1,6 +1,5 @@
 package com.and.blf.popularmovies.ui;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +17,6 @@ import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +47,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private Movie movie;
     private ExpandableListView reviewExpandableListView;
     private TextView trailerHeader;
+    private TextView reviewHeader;
     List<String> expandableListTitle;
     ExpandableListAdapter expandableListAdapter;
     String[] trailerLst;
@@ -76,7 +75,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void populateUI(Movie movie) {
         trailerHeader = findViewById(R.id.trailerHeader);
-        TextView reviews_header = findViewById(R.id.reviews_header);
+        reviewHeader = findViewById(R.id.reviews_header);
         TextView titleTv = findViewById(R.id.movie_title);
         titleTv.setText(movie.getTitle());
 
@@ -116,7 +115,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             loadTrailers();
         }else{
             trailerHeader.setVisibility(View.GONE);
-            reviews_header.setVisibility(View.GONE);
+            reviewHeader.setVisibility(View.GONE);
         }
     }
 
@@ -126,8 +125,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<TrailerWrapper> call, Response<TrailerWrapper> response) {
                 trailerLst = response.body().getMovieThumbnailsKeys();
-                if(trailerLst == null || trailerLst.length == 0){
-                    findViewById(R.id.trailerHeader).setVisibility(View.GONE);
+                if(trailerLst != null && trailerLst.length > 0){
+                    findViewById(R.id.trailerHeader).setVisibility(View.VISIBLE);
                 }
             }
             @Override
@@ -204,6 +203,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             public void onResponse(Call<MovieReviewWrapper> call, Response<MovieReviewWrapper> response) {
                 List<MovieReview> lst = response.body().getResults();
                 if(lst != null && lst.size() > 0 ){
+                    MovieDetailsActivity.this.reviewHeader.setVisibility(View.VISIBLE);
                     HashMap<String, List<String>> expandableListDetail = new HashMap<>();
                     for(MovieReview mR : lst){
 
@@ -217,8 +217,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
                     expandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, expandableListTitle, expandableListDetail);
                     reviewExpandableListView.setAdapter(expandableListAdapter);
-
-                }
+                } else {
+                    MovieDetailsActivity.this.reviewHeader.setVisibility(View.GONE);
+                };
             }
 
             @Override
@@ -229,14 +230,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     public void setVisible_trailers_frame(View view) {
-        findViewById(R.id.trailers_frame).setVisibility(View.VISIBLE);
-
-        RecyclerView trailerRecyclerView = findViewById(R.id.tariler_list);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
-        TrailerRecyclerViewAdapter trailerAdapter = new TrailerRecyclerViewAdapter(trailerLst);
-        trailerRecyclerView.setHasFixedSize(true);
-        trailerRecyclerView.setLayoutManager(linearLayoutManager);
-        trailerRecyclerView.setAdapter(trailerAdapter);
+        if(findViewById(R.id.trailers_frame).getVisibility() == View.GONE) {
+            findViewById(R.id.trailers_frame).setVisibility(View.VISIBLE);
+            RecyclerView trailerRecyclerView = findViewById(R.id.tariler_list);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            TrailerRecyclerViewAdapter trailerAdapter = new TrailerRecyclerViewAdapter(trailerLst);
+            trailerRecyclerView.setHasFixedSize(true);
+            trailerRecyclerView.setLayoutManager(linearLayoutManager);
+            trailerRecyclerView.setAdapter(trailerAdapter);
+        }else{
+            findViewById(R.id.trailers_frame).setVisibility(View.GONE);
+        }
     }
 
     public void setVisible_reviews_frame(View view) {
