@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         mLoadingIndicator.setVisibility(View.GONE);
                     }
                 }
-                if (dy < 0 || mAdapter.getItemCount() == 0) {
+                if (dy < 0 || mAdapter.getItemCount() < 10) {
                     botNavView.setVisibility(View.VISIBLE);
                 } else {
                     botNavView.setVisibility(View.GONE);
@@ -144,6 +144,10 @@ public class MainActivity extends AppCompatActivity {
             case "top_rated":
                 botNavView.setSelectedItemId(R.id.navigation_top_rated);
                 setAppTitle("Top rated");
+                break;
+            case "favorite":
+                botNavView.setSelectedItemId(R.id.navigation_marked);
+                setAppTitle("Favorite");
                 break;
             default:
                 botNavView.setSelectedItemId(R.id.navigation_popular);

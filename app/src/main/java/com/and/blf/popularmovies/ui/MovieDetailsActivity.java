@@ -75,6 +75,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void populateUI(Movie movie) {
+        trailerHeader = findViewById(R.id.trailerHeader);
+        TextView reviews_header = findViewById(R.id.reviews_header);
         TextView titleTv = findViewById(R.id.movie_title);
         titleTv.setText(movie.getTitle());
 
@@ -112,9 +114,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
         if(MovieNetworkUtils.networkIsAvailable(this)){
             loadMovieReviews();
             loadTrailers();
+        }else{
+            trailerHeader.setVisibility(View.GONE);
+            reviews_header.setVisibility(View.GONE);
         }
-
-        trailerHeader = findViewById(R.id.trailerHeader);
     }
 
     private void loadTrailers() {
@@ -130,6 +133,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<TrailerWrapper> call, Throwable t) {
                 //TODO logCat
+
             }
         });
 

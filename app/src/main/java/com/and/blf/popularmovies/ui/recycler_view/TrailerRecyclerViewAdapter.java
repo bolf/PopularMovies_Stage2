@@ -69,7 +69,7 @@ public class TrailerRecyclerViewAdapter extends RecyclerView.Adapter<TrailerRecy
                 Intent intnt = new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=" + curKey));
                 v.getContext().startActivity(intnt);
             } catch (Exception ex) {
-                Toast.makeText(v.getContext(),"Application for watching YouTube videos not found.", Toast.LENGTH_LONG).show();
+                Toast.makeText(v.getContext(),"Application for watching YouTube videos not found.", Toast.LENGTH_SHORT).show();
             }
         }
 
