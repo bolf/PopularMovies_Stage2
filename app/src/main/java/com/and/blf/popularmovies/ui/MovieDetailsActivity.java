@@ -43,8 +43,8 @@ import retrofit2.Response;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
-    private ImageButton imgBut;
-    private Movie movie;
+    private ImageButton mImgBut;
+    private Movie mMovie;
     private ExpandableListView reviewExpandableListView;
     private TextView trailerHeader;
     private TextView reviewHeader;
@@ -57,7 +57,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
-        imgBut = findViewById(R.id.imageButton_mark_favorite);
+        mImgBut = findViewById(R.id.imageButton_mark_favorite);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -65,12 +65,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
 
         try {
-            movie = intent.getParcelableExtra(MOVIE_PARCEL);
+            mMovie = intent.getParcelableExtra(MOVIE_PARCEL);
         } catch (NullPointerException e) {
             Log.d(getString(R.string.PARCELABLE_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
-        populateUI(movie);
+        populateUI(mMovie);
     }
 
     private void populateUI(Movie movie) {
@@ -87,7 +87,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         TextView voteAverageTv = findViewById(R.id.vote_average);
 
-        voteAverageTv.setText(getString(R.string.Raiting_tv) + Float.valueOf(movie.getVoteAverage()).toString());
+        voteAverageTv.setText(getString(R.string.Rating_tv) + Float.valueOf(movie.getVoteAverage()).toString());
 
         ImageView backdropIv = findViewById(R.id.backdrop);
         try {
@@ -120,7 +120,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void loadTrailers() {
-        Call<TrailerWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getTrailers(String.valueOf(movie.getId()), "1d0f6fe52ffd029bdfb40c1c3c780b73");
+        Call<TrailerWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getTrailers(String.valueOf(mMovie.getId()), getString(R.string.api_key));
         wrapperCall.enqueue(new Callback<TrailerWrapper>() {
             @Override
             public void onResponse(Call<TrailerWrapper> call, Response<TrailerWrapper> response) {
@@ -144,11 +144,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     public void mark_favorite(View view) {
-        if (movie.getLocalDbId() > -1) { //it's removal
+        if (mMovie.getLocalDbId() > -1) { //it's removal
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.ic_local_movies_black_24dp)
                     .setTitle("Removing from favorites")
-                    .setMessage("Are you sure you want to remove " + movie.getTitle() + " from the favorite movie list?")
+                    .setMessage("Are you sure you want to remove " + mMovie.getTitle() + " from the favorite movie list?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -157,7 +157,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                     null,
                                     MovieContract.FavoriteMovieEntry.CONTENT_URI,
                                     "_id = ?",
-                                    new String[]{String.valueOf(movie.getLocalDbId())});
+                                    new String[]{String.valueOf(mMovie.getLocalDbId())});
                         }
                     })
                     .setNegativeButton("No", null)
@@ -165,13 +165,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         } else {
             MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
             ContentValues movieStruct = new ContentValues();
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, movie.getId());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, movie.getTitle());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
-            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_BACKDROP_PATH, mMovie.getBackdropPath());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_MOVIE_ID, mMovie.getId());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_OVERVIEW, mMovie.getOverview());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_TITLE, mMovie.getTitle());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_VOTE_AVERAGE, mMovie.getVoteAverage());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_RELEASE_DATE, mMovie.getReleaseDate());
+            movieStruct.put(MovieContract.FavoriteMovieEntry.COLUMN_POSTER_PATH, mMovie.getPosterPath());
             asyncQueryHandler.startInsert(MovieAsyncQueryHandler.ASYNC_WRITE_ID,
                     null,
                     MovieContract.FavoriteMovieEntry.CONTENT_URI,
@@ -180,24 +180,24 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     public void setMovieStarVisibility(){
-        if (movie.getLocalDbId() > -1) {
-            imgBut.setImageResource(R.drawable.ic_star_golden_24dp);
+        if (mMovie.getLocalDbId() > -1) {
+            mImgBut.setImageResource(R.drawable.ic_star_golden_24dp);
         } else {
-            imgBut.setImageResource(R.drawable.ic_star_border_black_24dp);
+            mImgBut.setImageResource(R.drawable.ic_star_border_black_24dp);
         }
     }
 
     public void setMovieLocalDbId(int id) {
-        movie.setLocalDbId(id);
+        mMovie.setLocalDbId(id);
         setMovieStarVisibility();
         Intent intent = new Intent();
         intent.putExtra("LocalDbmovieId",id);
-        intent.putExtra("movieId",movie.getId());
+        intent.putExtra("movieId",mMovie.getId());
         setResult(RESULT_OK, intent);
     }
 
     private void loadMovieReviews() {
-        Call<MovieReviewWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getReviews(String.valueOf(movie.getId()), "1d0f6fe52ffd029bdfb40c1c3c780b73");
+        Call<MovieReviewWrapper> wrapperCall = MovieNetworkUtils.getMovieService().getReviews(String.valueOf(mMovie.getId()), getString(R.string.api_key));
         wrapperCall.enqueue(new Callback<MovieReviewWrapper>() {
             @Override
             public void onResponse(Call<MovieReviewWrapper> call, Response<MovieReviewWrapper> response) {

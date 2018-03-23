@@ -54,7 +54,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
                 ));
             }
             ((MainActivity) weakContext.get()).mAdapter.setMovieList(movies,true);
-            ((MainActivity) weakContext.get()).isLoadingNow = false;
+            ((MainActivity) weakContext.get()).mIsLoadingNow = false;
             ((MainActivity) weakContext.get()).mLoadingIndicator.setVisibility(View.GONE);
         }else if(token == ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST || token == ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST){
             Map<Integer,Integer> idMap = new HashMap<>();

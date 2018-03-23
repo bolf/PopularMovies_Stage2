@@ -1,14 +1,14 @@
 <resources>
-    <string name="api_key">INSERT_HERE_YOUR_APIKEY_=)</string>
+    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
 
     <string name="app_name">Pop. Movies</string>
     <string name="sort_movies_by_rating">Sort movies by rating</string>
     <string name="sort_movies_by_popularity">Sort movies by popularity</string>
     <string name="sort_mode">sort_mode</string>
     <string name="sharedPrefFileName">com.and.blf.popularmovies.PREFERENCE_FILE</string>
-    <string name="sortByPopularity">popular</string>
-    <string name="sortByRating">top_rated</string>
-    <string name="sort_favorite">favorite</string>
+    <string name="sortModeByPopularity">popular</string>
+    <string name="sortModeByRating">top_rated</string>
+    <string name="sortMode_favorite">favorite</string>
 
     <string name="jsonNames_results">results</string>
     <string name="jsonNames_id">id</string>
@@ -22,12 +22,15 @@
     <string name="description_foreground_picture">foreground picture</string>
     <string name="PARCELABLE_EXCEPTION">PARCELABLE_EXCEPTION</string>
     <string name="PICASSO_EXCEPTION">PICASSO_EXCEPTION</string>
-    <string name="Raiting_tv">Raiting</string>
+    <string name="Rating_tv">Rating</string>
     <string name="IO_EXCEPTION">IOException</string>
     <string name="JSON_EXCEPTION">JSONException</string>
     <string name="PARSE_EXCEPTION">ParseException</string>
 
-    <string name="title_top_rated">Top rated</string>
-    <string name="title_popular">Popular</string>
-    <string name="title_favorite">Favorite</string>
+    <string name="title_top_rated">Top rated movies</string>
+    <string name="title_popular">Popular movies</string>
+    <string name="title_favorite">Favorite movies</string>
+    <string name="loadingMovieListExceptionTag">LOAD_MOVIE_LIST_EXCPTN</string>
+    <string name="locDbMovieID_extra">LocalDbmovieId</string>
+    <string name="movieID_extra">movieId</string>
 </resources>
