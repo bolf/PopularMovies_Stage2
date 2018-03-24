@@ -7,8 +7,6 @@ import java.util.List;
 public class MovieReviewWrapper {
     private List<MovieReview> results;
 
-    public MovieReviewWrapper(){}
-
     public MovieReviewWrapper(List<MovieReview> results) {
         this.results = results;
     }

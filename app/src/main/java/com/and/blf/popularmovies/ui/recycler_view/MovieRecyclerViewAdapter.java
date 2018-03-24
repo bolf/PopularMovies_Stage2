@@ -38,7 +38,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         holder.m_movieTitle.setText(m_movieList.get(position).getTitle());
         Picasso.with(holder.m_moviePosterThumbnail.getContext())
-                .load(MovieNetworkUtils.buildImageRequestUrl("w200", m_movieList.get(position).getPosterPath()))
+                .load(MovieNetworkUtils.buildImageRequestUrl(holder.m_moviePosterThumbnail.getContext().getString(R.string.detailed_poster_size), m_movieList.get(position).getPosterPath()))
                 .into(holder.m_moviePosterThumbnail);
 
         holder.m_favoriteStar.setVisibility(m_movieList.get(position).getLocalDbId() > -1 ? View.VISIBLE : View.GONE);
@@ -57,7 +57,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
         notifyDataSetChanged();
     }
 
-    public void updateMovieList(int requestType, List<Movie> lst, boolean reload,ContentResolver contResolver,WeakReference<Context> weakRef){
+    public void updateMovieList(int requestType, List<Movie> lst, ContentResolver contResolver,WeakReference<Context> weakRef){
         String[] projection;
         String selection = null;
         if (requestType == MovieAsyncQueryHandler.ASYNC_GET_ALL_FAVORITES) {

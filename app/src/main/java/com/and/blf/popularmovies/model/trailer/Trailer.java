@@ -6,9 +6,6 @@ public class Trailer {
     private String name;
     private String id;
 
-    public Trailer() {
-    }
-
     public int getMovieId() {
         return movieId;
     }

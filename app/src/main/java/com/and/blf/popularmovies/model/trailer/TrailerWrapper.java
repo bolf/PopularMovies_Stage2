@@ -5,9 +5,6 @@ import java.util.List;
 public class TrailerWrapper {
     List<Trailer> results;
 
-    public TrailerWrapper() {
-    }
-
     public TrailerWrapper(List<Trailer> results) {
         this.results = results;
     }

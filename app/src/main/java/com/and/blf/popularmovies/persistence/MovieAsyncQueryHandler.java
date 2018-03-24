@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
+import com.and.blf.popularmovies.R;
 import com.and.blf.popularmovies.model.movie.Movie;
 import com.and.blf.popularmovies.ui.MainActivity;
 import com.and.blf.popularmovies.ui.MovieDetailsActivity;
@@ -24,7 +25,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
     public static final int ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST = 7;
     public static final int ASYNC_WRITE_ID = 9;
     public static final int ASYNC_DELETE_ID = 11;
-    WeakReference<Context> weakContext;
+    private WeakReference<Context> weakContext;
 
     public MovieAsyncQueryHandler(ContentResolver cr, WeakReference<Context> weakContext) {
         super(cr);
@@ -59,13 +60,13 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
         }else if(token == ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST || token == ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST){
             Map<Integer,Integer> idMap = new HashMap<>();
             while (cursor.moveToNext()) {
-                idMap.put(new Integer(cursor.getInt(1)),new Integer(cursor.getInt(0)));
+                idMap.put(cursor.getInt(1),cursor.getInt(0));
             }
             ArrayList<Movie> movieLst = (ArrayList<Movie>)cookie;
             for (Movie m : movieLst) {
-                Integer locDbId = idMap.get(new Integer(m.getId()));
+                Integer locDbId = idMap.get(m.getId());
                 if(locDbId != null){
-                    m.setLocalDbId(locDbId.intValue());
+                    m.setLocalDbId(locDbId);
                 }else{
                     m.setLocalDbId(-1);
                 }
@@ -80,7 +81,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
         super.onInsertComplete(token, cookie, uri);
         int _id = Integer.parseInt(uri.toString().replace(MovieContract.FavoriteMovieEntry.CONTENT_URI.toString() + "/", ""));
         ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(_id);
-        Toast.makeText(weakContext.get(), "added to favorites", Toast.LENGTH_SHORT).show();
+        Toast.makeText(weakContext.get(), R.string.added_to_favorites_msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -93,7 +94,7 @@ public class MovieAsyncQueryHandler extends AsyncQueryHandler {
         super.onDeleteComplete(token, cookie, result);
         if (result > 0) {
             ((MovieDetailsActivity) weakContext.get()).setMovieLocalDbId(-1);
-            Toast.makeText(weakContext.get(), "removed from favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(weakContext.get(), R.string.removed_from_favorites_msg, Toast.LENGTH_SHORT).show();
         }
     }
 }

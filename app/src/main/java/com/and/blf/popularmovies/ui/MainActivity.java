@@ -53,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_popular:
-                    if (mCurrentSortMode == getString(R.string.sortModeByPopularity)){break;}
+                    if (mCurrentSortMode != null && mCurrentSortMode.equals(getString(R.string.sortModeByPopularity))) {
+                        break;
+                    }
                     mCurrentPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     setTitle(getString(R.string.title_popular));
@@ -62,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
                     loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByPopularity), true);
                     return true;
                 case R.id.navigation_top_rated:
-                    if (mCurrentSortMode == getString(R.string.sortModeByRating)){break;}
+                    if (mCurrentSortMode != null && mCurrentSortMode.equals(getString(R.string.sortModeByRating))) {
+                        break;
+                    }
                     mCurrentPageNum = 1;
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     setTitle(getString(R.string.title_top_rated));
@@ -71,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
                     loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByRating), true);
                     return true;
                 case R.id.navigation_marked:
-                    if (mCurrentSortMode == getString(R.string.sortMode_favorite)){break;}
+                    if (mCurrentSortMode != null && mCurrentSortMode.equals(getString(R.string.sortMode_favorite))) {
+                        break;
+                    }
                     mIsLoadingNow = true;
                     mCurrentSortMode = getString(R.string.sortMode_favorite);
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortMode_favorite));
@@ -116,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastVisibleItemPosition() && !mIsLoadingNow && mCurrentSortMode != getString(R.string.sortMode_favorite)) {
+                if (mAdapter.getItemCount() - 10 < mLayoutManager.findLastVisibleItemPosition() && !mIsLoadingNow && !mCurrentSortMode.equals(getString(R.string.sortMode_favorite))) {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         mIsLoadingNow = true;
@@ -161,16 +167,22 @@ public class MainActivity extends AppCompatActivity {
         wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
             @Override
-            public void onResponse(Call<MovieWrapper> call, Response<MovieWrapper> response) {
-                List<Movie> lst = response.body().getResults();
-                mAdapter.updateMovieList(requestType, lst, reloadAdapterCollection, getContentResolver(),new WeakReference<Context>(MainActivity.this));
-                mCurrentPageNum++;
-                mIsLoadingNow = false;
-                mLoadingIndicator.setVisibility(View.GONE);
+            public void onResponse(@NonNull Call<MovieWrapper> call, @NonNull Response<MovieWrapper> response) {
+                try {
+                    List<Movie> lst = response.body().getResults();
+                    mAdapter.updateMovieList(requestType, lst, getContentResolver(), new WeakReference<Context>(MainActivity.this));
+                    mCurrentPageNum++;
+                    mIsLoadingNow = false;
+                    mLoadingIndicator.setVisibility(View.GONE);
+                }catch (NullPointerException e){
+                    Log.d(getString(R.string.loadingMovieListExceptionTag), e.getMessage());
+                    mIsLoadingNow = false;
+                    mLoadingIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override
-            public void onFailure(Call<MovieWrapper> call, Throwable t) {
+            public void onFailure(@NonNull  Call<MovieWrapper> call, @NonNull Throwable t) {
                 Log.d(getString(R.string.loadingMovieListExceptionTag), t.getMessage());
                 mIsLoadingNow = false;
                 mLoadingIndicator.setVisibility(View.GONE);

@@ -1,7 +1,7 @@
 <resources>
-    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
+    <string name="api_key">insert here your API key</string>
 
-    <string name="app_name">Pop. Movies</string>
+    <string name="app_name">Popular Movies</string>
     <string name="sort_movies_by_rating">Sort movies by rating</string>
     <string name="sort_movies_by_popularity">Sort movies by popularity</string>
     <string name="sort_mode">sort_mode</string>
@@ -20,17 +20,33 @@
     <string name="jsonNames_release_date">release_date</string>
     <string name="description_background_picture">background picture</string>
     <string name="description_foreground_picture">foreground picture</string>
+
     <string name="PARCELABLE_EXCEPTION">PARCELABLE_EXCEPTION</string>
     <string name="PICASSO_EXCEPTION">PICASSO_EXCEPTION</string>
-    <string name="Rating_tv">Rating</string>
     <string name="IO_EXCEPTION">IOException</string>
     <string name="JSON_EXCEPTION">JSONException</string>
     <string name="PARSE_EXCEPTION">ParseException</string>
-
-    <string name="title_top_rated">Top rated movies</string>
-    <string name="title_popular">Popular movies</string>
-    <string name="title_favorite">Favorite movies</string>
+    <string name="load_reviews_failure">LOAD_REVIEWS_FAILURE</string>
+    <string name="load_trailer_failure_tag">LOAD_TRAILER</string>
+    <string name="couldnt_open_detail_msg">could not open detailed view</string>
     <string name="loadingMovieListExceptionTag">LOAD_MOVIE_LIST_EXCPTN</string>
+
+    <string name="title_top_rated">Top rated</string>
+    <string name="title_popular">Popular</string>
+    <string name="title_favorite">Favorite</string>
     <string name="locDbMovieID_extra">LocalDbmovieId</string>
     <string name="movieID_extra">movieId</string>
+    <string name="release_date_text">Release date: %1$s</string>
+    <string name="Rating_tv">Rating: %.1f</string>
+    <string name="backdrop_detail_image_size">w300</string>
+    <string name="detailed_poster_size">w200</string>
+    <string name="removing_form_favorites_title">Removing from favorites</string>
+    <string name="removing_from_favorites_question">Are you sure you want to remove %1$s from the favorite movie list?</string>
+    <string name="answer_yes">Yes</string>
+    <string name="answer_no">No</string>
+    <string name="reviews_title">REVIEWS</string>
+    <string name="trailers_title">TRAILERS</string>
+    <string name="added_to_favorites_msg">added to favorites</string>
+    <string name="removed_from_favorites_msg">removed from favorites</string>
+    <string name="couldnt_start_trailer_msg">Application for watching YouTube videos not found.</string>
 </resources>

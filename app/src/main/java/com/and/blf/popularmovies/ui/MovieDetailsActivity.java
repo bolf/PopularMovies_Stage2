@@ -45,19 +45,20 @@ public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
     private ImageButton mImgBut;
     private Movie mMovie;
-    private ExpandableListView reviewExpandableListView;
-    private TextView trailerHeader;
-    private TextView reviewHeader;
-    List<String> expandableListTitle;
-    ExpandableListAdapter expandableListAdapter;
-    String[] trailerLst;
+    private FrameLayout mTrailers_frame;
+    private FrameLayout mReviews_frame;
+    private RecyclerView mTrailerRecyclerView;
+    private LinearLayoutManager mTrailerLinearLayoutManager;
+    private ExpandableListView mReviewExpandableListView;
+    private TextView mReviewHeader;
+    private List<String> mExpandableListTitle;
+    private ExpandableListAdapter mExpandableListAdapter;
+    private String[] mTrailerLst;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-
-        mImgBut = findViewById(R.id.imageButton_mark_favorite);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -70,12 +71,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
             Log.d(getString(R.string.PARCELABLE_EXCEPTION), Log.getStackTraceString(e));
             closeOnError();
         }
+
+        mImgBut = findViewById(R.id.imageButton_mark_favorite);
+        mReviewHeader = findViewById(R.id.reviews_header);
+        mTrailers_frame = findViewById(R.id.trailers_frame);
+        mReviews_frame = findViewById(R.id.reviews_frame);
+        mTrailerRecyclerView = findViewById(R.id.trailer_rv);
         populateUI(mMovie);
     }
 
     private void populateUI(Movie movie) {
-        trailerHeader = findViewById(R.id.trailerHeader);
-        reviewHeader = findViewById(R.id.reviews_header);
+        TextView trailerHeader = findViewById(R.id.trailerHeader);
         TextView titleTv = findViewById(R.id.movie_title);
         titleTv.setText(movie.getTitle());
 
@@ -83,16 +89,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
         overviewTv.setText(movie.getOverview());
 
         TextView releaseDateTv = findViewById(R.id.release_date);
-        releaseDateTv.setText("Release date " + movie.getReleaseDate());
+        releaseDateTv.setText(getString(R.string.release_date_text, movie.getReleaseDate()));
 
         TextView voteAverageTv = findViewById(R.id.vote_average);
 
-        voteAverageTv.setText(getString(R.string.Rating_tv) + Float.valueOf(movie.getVoteAverage()).toString());
+        voteAverageTv.setText(getString(R.string.Rating_tv, movie.getVoteAverage()));
 
         ImageView backdropIv = findViewById(R.id.backdrop);
         try {
             Picasso.with(this)
-                    .load(MovieNetworkUtils.buildImageRequestUrl("w300", movie.getBackdropPath()))
+                    .load(MovieNetworkUtils.buildImageRequestUrl(getString(R.string.backdrop_detail_image_size), movie.getBackdropPath()))
                     .into(backdropIv);
         } catch (NullPointerException e) {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
@@ -102,7 +108,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         ImageView posterIv = findViewById(R.id.poster);
         try {
             Picasso.with(this)
-                    .load(MovieNetworkUtils.buildImageRequestUrl("w200", movie.getPosterPath()))
+                    .load(MovieNetworkUtils.buildImageRequestUrl(getString(R.string.detailed_poster_size), movie.getPosterPath()))
                     .into(posterIv);
         } catch (NullPointerException e) {
             Log.d(getString(R.string.PICASSO_EXCEPTION), Log.getStackTraceString(e));
@@ -115,7 +121,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             loadTrailers();
         }else{
             trailerHeader.setVisibility(View.GONE);
-            reviewHeader.setVisibility(View.GONE);
+            mReviewHeader.setVisibility(View.GONE);
         }
     }
 
@@ -124,32 +130,33 @@ public class MovieDetailsActivity extends AppCompatActivity {
         wrapperCall.enqueue(new Callback<TrailerWrapper>() {
             @Override
             public void onResponse(Call<TrailerWrapper> call, Response<TrailerWrapper> response) {
-                trailerLst = response.body().getMovieThumbnailsKeys();
-                if(trailerLst != null && trailerLst.length > 0){
-                    findViewById(R.id.trailerHeader).setVisibility(View.VISIBLE);
+                if(response.body() != null){
+                    mTrailerLst = response.body().getMovieThumbnailsKeys();
+                    if(mTrailerLst.length > 0){
+                        findViewById(R.id.trailerHeader).setVisibility(View.VISIBLE);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<TrailerWrapper> call, Throwable t) {
-                //TODO logCat
-
+                Log.d(getString(R.string.load_trailer_failure_tag),t.getMessage());
             }
         });
 
     }
 
     private void closeOnError() {
+        Toast.makeText(this, R.string.couldnt_open_detail_msg,Toast.LENGTH_SHORT).show();
         finish();
-        Toast.makeText(this, "Couldn't get the detailed movie", Toast.LENGTH_SHORT).show();
     }
 
     public void mark_favorite(View view) {
         if (mMovie.getLocalDbId() > -1) { //it's removal
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.ic_local_movies_black_24dp)
-                    .setTitle("Removing from favorites")
-                    .setMessage("Are you sure you want to remove " + mMovie.getTitle() + " from the favorite movie list?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.removing_form_favorites_title)
+                    .setMessage(getString(R.string.removing_from_favorites_question, mMovie.getTitle()))
+                    .setPositiveButton(R.string.answer_yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(MovieDetailsActivity.this));
@@ -160,7 +167,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                                     new String[]{String.valueOf(mMovie.getLocalDbId())});
                         }
                     })
-                    .setNegativeButton("No", null)
+                    .setNegativeButton(R.string.answer_no, null)
                     .show();
         } else {
             MovieAsyncQueryHandler asyncQueryHandler = new MovieAsyncQueryHandler(getContentResolver(), new WeakReference<Context>(this));
@@ -191,8 +198,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mMovie.setLocalDbId(id);
         setMovieStarVisibility();
         Intent intent = new Intent();
-        intent.putExtra("LocalDbmovieId",id);
-        intent.putExtra("movieId",mMovie.getId());
+        intent.putExtra(getString(R.string.locDbMovieID_extra),id);
+        intent.putExtra(getString(R.string.movieID_extra),mMovie.getId());
         setResult(RESULT_OK, intent);
     }
 
@@ -201,54 +208,58 @@ public class MovieDetailsActivity extends AppCompatActivity {
         wrapperCall.enqueue(new Callback<MovieReviewWrapper>() {
             @Override
             public void onResponse(Call<MovieReviewWrapper> call, Response<MovieReviewWrapper> response) {
-                List<MovieReview> lst = response.body().getResults();
-                if(lst != null && lst.size() > 0 ){
-                    MovieDetailsActivity.this.reviewHeader.setVisibility(View.VISIBLE);
-                    HashMap<String, List<String>> expandableListDetail = new HashMap<>();
-                    for(MovieReview mR : lst){
+                try {
+                    List<MovieReview> lst = response.body().getResults();
+                    if (lst != null && lst.size() > 0) {
+                        MovieDetailsActivity.this.mReviewHeader.setVisibility(View.VISIBLE);
+                        HashMap<String, List<String>> expandableListDetail = new HashMap<>();
+                        for (MovieReview mR : lst) {
 
-                        List<String> review = new ArrayList<>();
-                        review.add(mR.getContent());
+                            List<String> review = new ArrayList<>();
+                            review.add(mR.getContent());
 
-                        expandableListDetail.put(mR.getAuthor(), review);
+                            expandableListDetail.put(mR.getAuthor(), review);
+                        }
+                        mReviewExpandableListView = findViewById(R.id.review_expandableListView);
+
+                        mExpandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                        mExpandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, mExpandableListTitle, expandableListDetail);
+                        mReviewExpandableListView.setAdapter(mExpandableListAdapter);
+                    } else {
+                        MovieDetailsActivity.this.mReviewHeader.setVisibility(View.GONE);
                     }
-                    reviewExpandableListView = findViewById(R.id.review_expandableListView);
-
-                    expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-                    expandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, expandableListTitle, expandableListDetail);
-                    reviewExpandableListView.setAdapter(expandableListAdapter);
-                } else {
-                    MovieDetailsActivity.this.reviewHeader.setVisibility(View.GONE);
-                };
+                } catch (NullPointerException e){
+                    Log.d(getString(R.string.load_reviews_failure),e.getMessage());
+                }
             }
 
             @Override
             public void onFailure(Call<MovieReviewWrapper> call, Throwable t) {
-                Log.d("ON_FAILURE", t.getMessage());
+                Log.d(getString(R.string.load_reviews_failure), t.getMessage());
             }
         });
     }
 
     public void setVisible_trailers_frame(View view) {
-        if(findViewById(R.id.trailers_frame).getVisibility() == View.GONE) {
-            findViewById(R.id.trailers_frame).setVisibility(View.VISIBLE);
-            RecyclerView trailerRecyclerView = findViewById(R.id.tariler_list);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            TrailerRecyclerViewAdapter trailerAdapter = new TrailerRecyclerViewAdapter(trailerLst);
-            trailerRecyclerView.setHasFixedSize(true);
-            trailerRecyclerView.setLayoutManager(linearLayoutManager);
-            trailerRecyclerView.setAdapter(trailerAdapter);
+        if(mTrailers_frame.getVisibility() == View.GONE) {
+            mTrailers_frame.setVisibility(View.VISIBLE);
+            if (mTrailerLinearLayoutManager == null) {
+                mTrailerLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                TrailerRecyclerViewAdapter trailerAdapter = new TrailerRecyclerViewAdapter(mTrailerLst);
+                mTrailerRecyclerView.setHasFixedSize(true);
+                mTrailerRecyclerView.setLayoutManager(mTrailerLinearLayoutManager);
+                mTrailerRecyclerView.setAdapter(trailerAdapter);
+            }
         }else{
-            findViewById(R.id.trailers_frame).setVisibility(View.GONE);
+            mTrailers_frame.setVisibility(View.GONE);
         }
     }
 
     public void setVisible_reviews_frame(View view) {
-        FrameLayout reviewsFl = findViewById(R.id.reviews_frame);
-        if(reviewsFl.getVisibility() == View.GONE){
-            reviewsFl.setVisibility(View.VISIBLE);
+        if(mReviews_frame.getVisibility() == View.GONE){
+            mReviews_frame.setVisibility(View.VISIBLE);
         }else{
-            reviewsFl.setVisibility(View.GONE);
+            mReviews_frame.setVisibility(View.GONE);
         }
     }
 }

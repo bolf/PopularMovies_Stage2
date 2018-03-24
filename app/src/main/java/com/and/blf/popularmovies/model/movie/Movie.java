@@ -15,8 +15,6 @@ public class Movie implements Parcelable {
     private float vote_average;
     private String release_date;
 
-    public Movie(){}
-
     public Movie(int localDbId, int id, String title, String posterPath, String backdropPath, String overview, float voteAverage, String releaseDate) {
         this.localDbId = localDbId;
         this.id = id;

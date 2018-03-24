@@ -3,6 +3,8 @@ package com.and.blf.popularmovies.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.and.blf.popularmovies.R;
+
 public class SharedPreferencesUtils {
     public static void writeToSharedPreferences(Context context, String shPrefName, String prefName, String prefVal){
         SharedPreferences sharedPref = context.getSharedPreferences(shPrefName,Context.MODE_PRIVATE);
@@ -13,6 +15,6 @@ public class SharedPreferencesUtils {
 
     public static String readFromSharedPreferences(Context context, String shPrefName, String prefName) {
         SharedPreferences sharedPref = context.getSharedPreferences(shPrefName,Context.MODE_PRIVATE);
-        return sharedPref.getString(prefName, "popular");
+        return sharedPref.getString(prefName, context.getString(R.string.sortModeByPopularity));
     }
 }

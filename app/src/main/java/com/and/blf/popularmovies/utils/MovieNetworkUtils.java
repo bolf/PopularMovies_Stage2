@@ -15,8 +15,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MovieNetworkUtils {
     private final static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
-
+    private final static String MOVIE_DB_URL = "https://api.themoviedb.org/";
     private final static String TRAILER_THUMBNAIL_IMAGE_URI = "https://img.youtube.com/vi";
+    private final static String TRAILER_QUALITY_PATH = "hqdefault.jpg";
 
     public static String buildImageRequestUrl(String sizePart, String picPath){
         Uri requestUri = Uri.parse(IMAGE_BASE_URL).buildUpon()
@@ -29,7 +30,7 @@ public class MovieNetworkUtils {
     public static String buildTrailerThumbnailRequestUrl(String trailerKey){
         Uri requestUri = Uri.parse(TRAILER_THUMBNAIL_IMAGE_URI).buildUpon()
                 .appendPath(trailerKey)
-                .appendPath("hqdefault.jpg")
+                .appendPath(TRAILER_QUALITY_PATH)
                 .build();
         return requestUri.toString();
     }
@@ -44,7 +45,7 @@ public class MovieNetworkUtils {
 
     public static MovieService getMovieService() {
         return new Retrofit.Builder()
-                .baseUrl("https://api.themoviedb.org/")
+                .baseUrl(MOVIE_DB_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .client(getHttpClient())
                 .build()

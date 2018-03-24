@@ -7,9 +7,6 @@ import java.util.List;
 public class MovieWrapper {
     private List<Movie> results;
 
-    public MovieWrapper() {
-    }
-
     public MovieWrapper(List<Movie> results) {
         this.results = results;
     }
