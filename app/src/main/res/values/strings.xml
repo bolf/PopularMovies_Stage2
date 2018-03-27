@@ -1,5 +1,5 @@
 <resources>
-    <string name="api_key">insert here your API key</string>
+    <string name="api_key">1d0f6fe52ffd029bdfb40c1c3c780b73</string>
 
     <string name="app_name">Popular Movies</string>
     <string name="sort_movies_by_rating">Sort movies by rating</string>

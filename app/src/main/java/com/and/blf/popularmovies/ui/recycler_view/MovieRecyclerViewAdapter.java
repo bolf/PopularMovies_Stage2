@@ -2,6 +2,7 @@ package com.and.blf.popularmovies.ui.recycler_view;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,12 +17,17 @@ import com.and.blf.popularmovies.utils.*;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     private List<Movie> m_movieList;
+
+    public List<Movie> getM_movieList() {
+        return m_movieList;
+    }
 
     public MovieRecyclerViewAdapter(List<Movie> movieList) {
         this.m_movieList = movieList;
@@ -54,6 +60,14 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieViewHold
             m_movieList.clear();
         }
         m_movieList.addAll(lst);
+        notifyDataSetChanged();
+    }
+
+    public void setMovieList(List<Parcelable> lst) {
+        for(Parcelable p : lst){
+            Movie m = (Movie) p;
+            m_movieList.add(m);
+        }
         notifyDataSetChanged();
     }
 

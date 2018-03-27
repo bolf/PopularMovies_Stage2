@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
@@ -36,6 +37,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +45,11 @@ import retrofit2.Response;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String MOVIE_PARCEL = "movieDetails";
+    private static final String KEY_EXPANDED_GROUPS_ARRAY = "KEY_EXPANDED_GROUPS_ARRAY";
+    private static final String KEY_REVIEW_AUTHORS = "KEY_REVIEW_AUTHORS";
+    private static final String KEY_REVIEW_TEXTS = "KEY_REVIEW_TEXTS";
+    private static final String KEY_TRAILER_LINKS = "KEY_TRAILER_LINKS";
+    private static final String KEY_TRAILERS_EXPANDED = "KEY_TRAILERS_EXPANDED";
     private ImageButton mImgBut;
     private Movie mMovie;
     private FrameLayout mTrailers_frame;
@@ -77,10 +84,80 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mTrailers_frame = findViewById(R.id.trailers_frame);
         mReviews_frame = findViewById(R.id.reviews_frame);
         mTrailerRecyclerView = findViewById(R.id.trailer_rv);
-        populateUI(mMovie);
+        mReviewExpandableListView = findViewById(R.id.review_expandableListView);
+
+        boolean getDataFromNet = true;
+        if (savedInstanceState != null) {
+            getDataFromNet = false;
+            String[] reviewAuthors = savedInstanceState.getStringArray(KEY_REVIEW_AUTHORS);
+            if(reviewAuthors!=null && reviewAuthors.length > 0) {
+                String[] reviewTexts = savedInstanceState.getStringArray(KEY_REVIEW_TEXTS);
+
+                HashMap<String, List<String>> expandableListDetail = new HashMap<>();
+                int i = 0;
+                for (String tmp : reviewAuthors) {
+
+                    List<String> review = new ArrayList<>();
+                    review.add(reviewTexts[i]);
+
+                    expandableListDetail.put(tmp, review);
+                    i++;
+                }
+                mReviewHeader.setVisibility(View.VISIBLE);
+                mExpandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                mExpandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, mExpandableListTitle, expandableListDetail);
+                mReviewExpandableListView.setAdapter(mExpandableListAdapter);
+
+                boolean[] groupExpandedArray = savedInstanceState.getBooleanArray(KEY_EXPANDED_GROUPS_ARRAY);
+                if (groupExpandedArray != null) {
+                    setVisible_reviews_frame(null);
+                    for (i = 0; i < groupExpandedArray.length; i++)
+                        if (groupExpandedArray[i])
+                            mReviewExpandableListView.expandGroup(i);
+                }
+            }
+            //restoring trailers
+            mTrailerLst = savedInstanceState.getStringArray(KEY_TRAILER_LINKS);
+            if(mTrailerLst != null && mTrailerLst.length > 0){
+                findViewById(R.id.trailerHeader).setVisibility(View.VISIBLE);
+            }
+            if(savedInstanceState.getBoolean(KEY_TRAILERS_EXPANDED)){
+                setVisible_trailers_frame(null);
+            }
+        }
+        populateUI(mMovie,getDataFromNet);
     }
 
-    private void populateUI(Movie movie) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mExpandableListAdapter != null) {
+            //saving reviews previously taken from net
+            HashMap<String, List<String>> reviews = ((CustomExpandableListAdapter) mExpandableListAdapter).getExpandableListDetail();
+            String[] reviewAuthors = new String[reviews.size()];
+            String[] reviewTexts = new String[reviews.size()];
+            int i = 0;
+            for (Map.Entry<String, List<String>> entry : reviews.entrySet()) {
+                reviewAuthors[i] = entry.getKey();
+                reviewTexts[i] = entry.getValue().get(0);
+                i++;
+            }
+            outState.putStringArray(KEY_REVIEW_AUTHORS, reviewAuthors);
+            outState.putStringArray(KEY_REVIEW_TEXTS, reviewTexts);
+
+            //saving data about expanded items
+            int numberOfGroups = mExpandableListAdapter.getGroupCount();
+            boolean[] groupExpandedArray = new boolean[numberOfGroups];
+            for (i = 0; i < numberOfGroups; i++)
+                groupExpandedArray[i] = mReviewExpandableListView.isGroupExpanded(i);
+            outState.putBooleanArray(KEY_EXPANDED_GROUPS_ARRAY, groupExpandedArray);
+        }
+            //saving trailer links
+            outState.putStringArray(KEY_TRAILER_LINKS,mTrailerLst);
+            outState.putBoolean(KEY_TRAILERS_EXPANDED,mTrailers_frame.getVisibility() == View.VISIBLE);
+    }
+
+    private void populateUI(Movie movie, boolean getDataFromNet) {
         TextView trailerHeader = findViewById(R.id.trailerHeader);
         TextView titleTv = findViewById(R.id.movie_title);
         titleTv.setText(movie.getTitle());
@@ -116,12 +193,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
         setMovieStarVisibility();
 
-        if(MovieNetworkUtils.networkIsAvailable(this)){
-            loadMovieReviews();
-            loadTrailers();
-        }else{
-            trailerHeader.setVisibility(View.GONE);
-            mReviewHeader.setVisibility(View.GONE);
+        if(getDataFromNet) {
+            if (MovieNetworkUtils.networkIsAvailable(this)) {
+                loadMovieReviews();
+                loadTrailers();
+            } else {
+                trailerHeader.setVisibility(View.GONE);
+                mReviewHeader.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -220,7 +299,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                             expandableListDetail.put(mR.getAuthor(), review);
                         }
-                        mReviewExpandableListView = findViewById(R.id.review_expandableListView);
 
                         mExpandableListTitle = new ArrayList<>(expandableListDetail.keySet());
                         mExpandableListAdapter = new CustomExpandableListAdapter(MovieDetailsActivity.this, mExpandableListTitle, expandableListDetail);

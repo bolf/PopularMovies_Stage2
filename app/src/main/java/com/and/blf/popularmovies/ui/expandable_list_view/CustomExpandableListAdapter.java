@@ -18,6 +18,10 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
 
+    public HashMap<String, List<String>> getExpandableListDetail() {
+        return expandableListDetail;
+    }
+
     public CustomExpandableListAdapter(Context context, List<String> expandableListTitle, HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;

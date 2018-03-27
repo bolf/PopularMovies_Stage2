@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2b2b2b">
+    android:background="#2b2b2b"
+    android:id="@+id/detail_scrollView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -150,7 +151,7 @@
         <FrameLayout
             android:id="@+id/reviews_frame"
             android:layout_width="match_parent"
-            android:layout_height="700dp"
+            android:layout_height="300dp"
             android:visibility="gone">
 
             <ExpandableListView

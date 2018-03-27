@@ -3,6 +3,7 @@ package com.and.blf.popularmovies.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -35,9 +36,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String KEY_INSTANCE_STATE_RV = "KEY_INSTANCE_STATE_RV";
+    private static final String KEY_INSTANCE_STATE_RV_LIST = "KEY_INSTANCE_STATE_RV_LIST";
+    private static final String KEY_CUR_PAGE_NUM = "KEY_CUR_PAGE_NUM";
+    private static final String KEY_CUR_SORT_MODE = "KEY_CUR_SORT_MODE";
+    private Parcelable mLayoutManagerSavedState;
     private String mCurrentSortMode;
     int mCurrentPageNum = 1;
     public boolean mIsLoadingNow = false;
+
+    private ArrayList<Parcelable> mSavedMovieList;
 
     public final MovieRecyclerViewAdapter mAdapter = new MovieRecyclerViewAdapter(new ArrayList<Movie>());
     GridLayoutManager mLayoutManager;
@@ -61,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(getString(R.string.title_popular));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortModeByPopularity));
                     mCurrentSortMode = getString(R.string.sortModeByPopularity);
-                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByPopularity), true);
+                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByPopularity));
                     return true;
                 case R.id.navigation_top_rated:
                     if (mCurrentSortMode != null && mCurrentSortMode.equals(getString(R.string.sortModeByRating))) {
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(getString(R.string.title_top_rated));
                     SharedPreferencesUtils.writeToSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode), getString(R.string.sortModeByRating));
                     mCurrentSortMode = getString(R.string.sortModeByRating);
-                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByRating), true);
+                    loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_REPLACE_ADAPTER_LIST,getString(R.string.sortModeByRating));
                     return true;
                 case R.id.navigation_marked:
                     if (mCurrentSortMode != null && mCurrentSortMode.equals(getString(R.string.sortMode_favorite))) {
@@ -115,7 +123,22 @@ public class MainActivity extends AppCompatActivity {
         mMovieService = MovieNetworkUtils.getMovieService();
 
         mBottomNavView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        setBottomNavigationViewSelectedItem();
+
+        //не делать каждый раз релоад, сохранять лист
+        //делать релоад только если пустой адаптер
+        if (savedInstanceState != null) {
+            mLayoutManagerSavedState = savedInstanceState.getParcelable(KEY_INSTANCE_STATE_RV);
+            mSavedMovieList = savedInstanceState.getParcelableArrayList(KEY_INSTANCE_STATE_RV_LIST);
+            mCurrentPageNum = savedInstanceState.getInt(KEY_CUR_PAGE_NUM);
+            mCurrentSortMode = savedInstanceState.getString(KEY_CUR_SORT_MODE);
+        }
+        if (mLayoutManagerSavedState != null && mSavedMovieList != null) {
+            mAdapter.setMovieList(mSavedMovieList);
+            mLayoutManager.onRestoreInstanceState(mLayoutManagerSavedState);
+        }else{
+            setBottomNavigationViewSelectedItem();
+        }
+
 
         //endless scroll
         movieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -126,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     if (MovieNetworkUtils.networkIsAvailable(MainActivity.this)) {
                         mIsLoadingNow = true;
-                        loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST,SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)), false);
+                        loadMovies(MovieAsyncQueryHandler.ASYNC_GET_FAVORITES_NO_REPLACE_ADAPTER_LIST,SharedPreferencesUtils.readFromSharedPreferences(MainActivity.this, getString(R.string.sharedPrefFileName), getString(R.string.sort_mode)));
                     } else if (dy < 0) {
                         mLoadingIndicator.setVisibility(View.GONE);
                     }
@@ -162,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void loadMovies(final int requestType, String endPoint, final boolean reloadAdapterCollection) {
+    private void loadMovies(final int requestType, String endPoint) {
         Call<MovieWrapper> wrapperCall = mMovieService.getMovies(endPoint, getString(R.string.api_key), mCurrentPageNum);
         wrapperCall.enqueue(new Callback<MovieWrapper>() {
 
@@ -208,5 +231,14 @@ public class MainActivity extends AppCompatActivity {
             int movieId = data.getIntExtra(getString(R.string.movieID_extra), -1);
             mAdapter.setLocalDbIdOnItem(movieId, locDbMovieId);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(KEY_INSTANCE_STATE_RV_LIST,(ArrayList<Movie>)mAdapter.getM_movieList());
+        outState.putParcelable(KEY_INSTANCE_STATE_RV, mLayoutManager.onSaveInstanceState());
+        outState.putInt(KEY_CUR_PAGE_NUM, mCurrentPageNum);
+        outState.putString(KEY_CUR_SORT_MODE,mCurrentSortMode);
     }
 }
